@@ -6,5 +6,8 @@ import { ComputeStack } from '../lib/compute-stack';
 const ailliz = new cdk.App();
 
 new ComputeStack(ailliz, 'ComputeStack', {
-  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+  env: { 
+    account: process.env.CDK_DEFAULT_ACCOUNT, 
+    region: process.env.CDK_DEFAULT_REGION,
+  },
 });
