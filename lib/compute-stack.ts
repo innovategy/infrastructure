@@ -29,9 +29,10 @@ export class ComputeStack extends cdk.Stack {
       memoryLimitMiB: computeConfig.MemoryLimitMib,
       publicLoadBalancer: true,
       domainName: computeConfig.DomainName,
-      protocol: ApplicationProtocol.HTTPS,
+      protocol: computeConfig.Https ?ApplicationProtocol.HTTPS: ApplicationProtocol.HTTP,
       targetProtocol: ApplicationProtocol.HTTP,
-      redirectHTTP: true,
+      redirectHTTP: computeConfig.Https,
+
       taskImageOptions: { 
         image: ecs.ContainerImage.fromEcrRepository(repo, "latest") 
       },

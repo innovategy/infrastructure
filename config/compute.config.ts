@@ -12,7 +12,8 @@ interface config {
   TargetProtocol: number;
   DomainName: string;
   ECRRepositoryName: string;
-  ECRScanOnPush: boolean
+  ECRScanOnPush: boolean;
+  Https: boolean;
 }
 
 export const computeConfig: config = {
@@ -26,5 +27,6 @@ export const computeConfig: config = {
   TargetProtocol: process.env.ECS_TASK_PORT == undefined ? 8080 : Number(process.env.ECS_TASK_PORT),
   DomainName: process.env.DOMAIN_NAME ?? 'ailliz.com',
   ECRRepositoryName: process.env.ECR_REPO_NAME ?? 'MyLovelyRepository',
-  ECRScanOnPush: process.env.ECR_SCAN_ON_PUSH == undefined ? Boolean(process.env.ECR_SCAN_ON_PUSH) :true,
+  ECRScanOnPush: process.env.ECR_SCAN_ON_PUSH == undefined ? true :Boolean(process.env.ECR_SCAN_ON_PUSH) ,
+  Https: process.env.HTTPS == undefined ? false : Boolean(process.env.HTTPS),
 };
