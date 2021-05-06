@@ -1,7 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 import * as rds from '@aws-cdk/aws-rds';
 import * as ec2 from "@aws-cdk/aws-ec2";
-import { computeConfig } from '../config/compute.config';
+import { computeConfig } from '../config/compute-cluster.config';
+import { databaseConfig } from '../config/database-cluster.config';
 
 export class DataStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -12,16 +13,12 @@ export class DataStack extends cdk.Stack {
             vpcName: "ComputeStack/" + computeConfig.VpcName
         })
 
-        const cluster = new rds.DatabaseCluster(this, 'InstancePrimary', {
-            engine: rds.DatabaseClusterEngine.auroraPostgres({ version: rds.AuroraPostgresEngineVersion.VER_12_4}),
-            credentials: rds.Credentials.fromGeneratedSecret('clusteradmin'),
-            instanceProps: {
-              instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM),
-              vpcSubnets: {
-                subnetType: ec2.SubnetType.PRIVATE,
-              },
-              vpc,
-            },
-          });
+        const cluster = new rds.ServerlessCluster(this, databaseConfig.Identifier, {
+          engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
+          parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-postgresql10'),
+          defaultDatabaseName: databaseConfig.Name,
+          deletionProtection: databaseConfig.Deleteable,
+          vpc,
+        });
     }
 }
