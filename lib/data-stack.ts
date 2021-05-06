@@ -16,7 +16,7 @@ export class DataStack extends cdk.Stack {
             engine: rds.DatabaseClusterEngine.auroraPostgres({ version: rds.AuroraPostgresEngineVersion.VER_12_4}),
             credentials: rds.Credentials.fromGeneratedSecret('clusteradmin'),
             instanceProps: {
-              instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.NANO),
+              instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.SMALL),
               vpcSubnets: {
                 subnetType: ec2.SubnetType.PRIVATE,
               },
