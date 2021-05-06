@@ -9,7 +9,7 @@ export class DataStack extends cdk.Stack {
 
         const vpc = ec2.Vpc.fromLookup(this, "vpc", {
             isDefault: false,
-            vpcName: computeConfig.VpcName
+            vpcName: "ComputeStack/" + computeConfig.VpcName
         })
 
         const cluster = new rds.DatabaseCluster(this, 'InstancePrimary', {
