@@ -9,6 +9,10 @@ interface config {
   MemoryLimitMib: number;
   FargateId: string;
   DesiredCount: number;
+  TargetProtocol: number;
+  DomainName: string;
+  ECRRepositoryName: string;
+  ECRScanOnPush: boolean
 }
 
 export const computeConfig: config = {
@@ -19,4 +23,8 @@ export const computeConfig: config = {
   MemoryLimitMib: process.env.ECS_FARGATE_MEMORY_LIMIT_MIB == undefined ? 512 : Number(process.env.ECS_FARGATE_MEMORY_LIMIT_MIB),
   FargateId: process.env.ECS_FARGATE_ID ?? 'MyLovelyFaragetService',
   DesiredCount: process.env.ECS_FARGATE_DESIRED_COUNT == undefined ? 1 : Number(process.env.ECS_FARGATE_DESIRED_COUNT),
+  TargetProtocol: process.env.ECS_TASK_PORT == undefined ? 8080 : Number(process.env.ECS_TASK_PORT),
+  DomainName: process.env.DOMAIN_NAME ?? 'ailliz.com',
+  ECRRepositoryName: process.env.ECR_REPO_NAME ?? 'MyLovelyRepository',
+  ECRScanOnPush: process.env.ECR_SCAN_ON_PUSH == undefined ? Boolean(process.env.ECR_SCAN_ON_PUSH) :true;
 };
