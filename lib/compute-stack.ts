@@ -13,6 +13,7 @@ export class ComputeStack extends cdk.Stack {
 
     const vpc = new ec2.Vpc(this, computeConfig.VpcName, {
       maxAzs: computeConfig.VpcMaxAzs,
+      natGateways: 0,
     });
 
     const repo = new ecr.Repository(this, computeConfig.ECRRepositoryName, {
