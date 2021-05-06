@@ -36,6 +36,7 @@ export class ComputeStack extends cdk.Stack {
       domainName: computeConfig.DomainName,
       protocol: computeConfig.Https ?ApplicationProtocol.HTTPS: ApplicationProtocol.HTTP,
       targetProtocol: ApplicationProtocol.HTTP,
+      certificate: ec2.certif,
       redirectHTTP: computeConfig.Https,
       domainZone: zone,
       taskImageOptions: { 

@@ -9,7 +9,7 @@ interface config {
 }
 
 export const databaseConfig: config = {
-  Name: process.env.DB_NAME ?? 'default',
+  Name: process.env.DB_NAME ?? 'clsdb',
   Identifier: process.env.DB_IDENTIFIER ?? 'identifier',
   Deleteable: process.env.DB_IDENTIFIER == undefined ? true : Boolean(process.env.DB_IDENTIFIER),
   BackupRetention: process.env.DB_IDENTIFIER == undefined ? 7 : Number(process.env.DB_IDENTIFIER),
