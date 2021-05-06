@@ -35,7 +35,6 @@ export class ComputeStack extends cdk.Stack {
       publicLoadBalancer: true,
       domainName: computeConfig.DomainName,
       protocol: computeConfig.Https ?ApplicationProtocol.HTTPS: ApplicationProtocol.HTTP,
-      targetProtocol: ApplicationProtocol.HTTP,
       redirectHTTP: computeConfig.Https,
       domainZone: zone,
       taskImageOptions: { 
