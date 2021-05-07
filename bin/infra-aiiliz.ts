@@ -13,9 +13,17 @@ new ComputeStack(ailliz, 'ComputeStack', {
         region: process.env.CDK_DEFAULT_REGION,
       },
 });
+
 new DataStack(ailliz, 'DatabaseStack', {
     env: { 
         account: process.env.CDK_DEFAULT_ACCOUNT, 
         region: process.env.CDK_DEFAULT_REGION,
       },
+});
+
+new DataStack(ailliz, 'StorageStack', {
+  env: { 
+      account: process.env.CDK_DEFAULT_ACCOUNT, 
+      region: process.env.CDK_DEFAULT_REGION,
+    },
 });
