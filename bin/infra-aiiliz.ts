@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { ComputeStack } from '../lib/compute-stack';
 import { DataStack } from '../lib/data-stack';
+import { BlobStorageStack } from '../lib/block-stack';
 
 const ailliz = new cdk.App();
 
@@ -21,7 +22,7 @@ new DataStack(ailliz, 'DatabaseStack', {
       },
 });
 
-new DataStack(ailliz, 'StorageStack', {
+new BlobStorageStack(ailliz, 'StorageStack', {
   env: { 
       account: process.env.CDK_DEFAULT_ACCOUNT, 
       region: process.env.CDK_DEFAULT_REGION,
