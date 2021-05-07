@@ -6,7 +6,7 @@ export class BlobStorageStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new Bucket(this, 'BlobStorage', {
+    new Bucket(this, s3Config.Name, {
         versioned: false,
         bucketName: s3Config.Name,
         encryption: BucketEncryption.KMS_MANAGED,
