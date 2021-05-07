@@ -22,7 +22,7 @@ new DataStack(ailliz, 'DatabaseStack', {
       },
 });
 
-new BlobStorageStack(ailliz, 'StorageStack', {
+new BlobStorageStack(ailliz, 'BlobStorageStack', {
   env: { 
       account: process.env.CDK_DEFAULT_ACCOUNT, 
       region: process.env.CDK_DEFAULT_REGION,
