@@ -4,7 +4,7 @@ import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecr from "@aws-cdk/aws-ecr";
 import { PublicHostedZone } from '@aws-cdk/aws-route53';
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
-import {computeConfig} from "../config/compute-cluster.config";
+import {computeConfig} from "../../config/compute-cluster.config";
 import { ApplicationProtocol} from '@aws-cdk/aws-elasticloadbalancingv2';
 
 export class ComputeStack extends cdk.Stack {
