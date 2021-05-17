@@ -3,5 +3,5 @@ import * as cdk from '@aws-cdk/core';
 import * as InfraAiiliz from '../stacks/compute-stack';
 
 test('Empty Stack', () => {
-    const app = new cdk.App();
+  const app = new cdk.App();
 });
