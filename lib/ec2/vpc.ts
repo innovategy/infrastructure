@@ -1,13 +1,12 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as cdk from '@aws-cdk/core';
 
-
-interface ISubnetAttr{
+interface ISubnetAttr {
   cidrMask: number;
   name: string;
 }
 
-interface ISubnetConfig extends ISubnetAttr{
+interface ISubnetConfig extends ISubnetAttr {
   subnetType: ec2.SubnetType;
 }
 
@@ -36,9 +35,10 @@ export class Vpc {
     return new ec2.Vpc(this.scope, this.VpcName, {
       maxAzs: this.maxAvailableZones,
       subnetConfiguration: [
-         this.getSingleIsolatedSubnetConfig({name: this.isolatedSubnetName, cidrMask: this.isolatedSubnetCidr}),
-         this.getSinglePrivateSubnetConfig({name: this.privateSubnetName, cidrMask: this.privateSubnetCidr}),
-         this.getSinglePublicSubnetConfig({name: this.publicSubnetName, cidrMask: this.publicSubnetCidr})],
+        this.getSingleIsolatedSubnetConfig({ name: this.isolatedSubnetName, cidrMask: this.isolatedSubnetCidr }),
+        this.getSinglePrivateSubnetConfig({ name: this.privateSubnetName, cidrMask: this.privateSubnetCidr }),
+        this.getSinglePublicSubnetConfig({ name: this.publicSubnetName, cidrMask: this.publicSubnetCidr }),
+      ],
       natGateways: this.SINGLE_NAT_FOR_ALL_ZONES,
     });
   }
@@ -88,7 +88,7 @@ export class Vpc {
     return this;
   }
 
-  private getSinglePublicSubnetConfig(attr:ISubnetAttr): ISubnetConfig {
+  private getSinglePublicSubnetConfig(attr: ISubnetAttr): ISubnetConfig {
     return {
       cidrMask: attr.cidrMask,
       name: attr.name,
@@ -96,7 +96,7 @@ export class Vpc {
     };
   }
 
-  private getSinglePrivateSubnetConfig(attr:ISubnetAttr): ISubnetConfig {
+  private getSinglePrivateSubnetConfig(attr: ISubnetAttr): ISubnetConfig {
     return {
       cidrMask: attr.cidrMask,
       name: attr.name,
@@ -104,7 +104,7 @@ export class Vpc {
     };
   }
 
-  private getSingleIsolatedSubnetConfig(attr:ISubnetAttr): ISubnetConfig {
+  private getSingleIsolatedSubnetConfig(attr: ISubnetAttr): ISubnetConfig {
     return {
       cidrMask: attr.cidrMask,
       name: attr.name,

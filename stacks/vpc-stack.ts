@@ -7,15 +7,15 @@ export class VpcStack extends cdk.Stack {
     super(scope, id, props);
 
     new Vpc()
-    .setIsolatedSubnetCidrMask(Config.getIsolatedCidrMask())
-    .setIsolatedSubnetName(Config.getIsolateSubnetName())
-    .setPrivateSubnetCidrMask(Config.getPrivateCidrMask())
-    .setPrivateSubnetName(Config.getPrivatevSubnetName())
-    .setPublicSubnetCidrMask(Config.getPublicCidrMask())
-    .setPublicSubnetName(Config.getPublicSubnetName())
-    .numberOfAvailabiltyZones(Config.getMaxAz())
-    .withName(Config.getName())
-    .inScope(scope)
-    .build();
+      .setIsolatedSubnetCidrMask(Config.getIsolatedCidrMask())
+      .setIsolatedSubnetName(Config.getIsolateSubnetName())
+      .setPrivateSubnetCidrMask(Config.getPrivateCidrMask())
+      .setPrivateSubnetName(Config.getPrivatevSubnetName())
+      .setPublicSubnetCidrMask(Config.getPublicCidrMask())
+      .setPublicSubnetName(Config.getPublicSubnetName())
+      .numberOfAvailabiltyZones(Config.getMaxAz())
+      .withName(Config.getName())
+      .inScope(scope)
+      .build();
   }
 }

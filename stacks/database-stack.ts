@@ -8,10 +8,10 @@ export class DataStack extends cdk.Stack {
     super(scope, id, props);
 
     new Serverless()
-        .autoPauseClusterAfter(Config.getAutoPauseDuration())
-        .backupDurationInDays(Config.getBackupRetentionDurationPolicy())
-        .inIsolateSubnetGroup(VPC.getIsolateSubnetName())
-        .withDatabaseName(Config.getDatabaseName())
-        .build();
+      .autoPauseClusterAfter(Config.getAutoPauseDuration())
+      .backupDurationInDays(Config.getBackupRetentionDurationPolicy())
+      .inIsolateSubnetGroup(VPC.getIsolateSubnetName())
+      .withDatabaseName(Config.getDatabaseName())
+      .build();
   }
 }
