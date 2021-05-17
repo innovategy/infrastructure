@@ -6,6 +6,16 @@ export class VpcStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new Vpc().numberOfAvailabiltyZones(Config.getMaxAz()).withName(Config.getName()).inScope(scope).build();
+    new Vpc()
+    .setIsolatedSubnetCidrMask(Config.getIsolatedCidrMask())
+    .setIsolatedSubnetName(Config.getIsolateSubnetName())
+    .setPrivateSubnetCidrMask(Config.getPrivateCidrMask())
+    .setPrivateSubnetName(Config.getPrivatevSubnetName())
+    .setPublicSubnetCidrMask(Config.getPublicCidrMask())
+    .setPublicSubnetName(Config.getPublicSubnetName())
+    .numberOfAvailabiltyZones(Config.getMaxAz())
+    .withName(Config.getName())
+    .inScope(scope)
+    .build();
   }
 }
