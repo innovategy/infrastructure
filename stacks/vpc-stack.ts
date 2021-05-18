@@ -4,7 +4,7 @@ import { Vpc } from '../lib/ec2/vpc';
 import Config from '../config/vpc.config';
 
 export class VpcStack extends cdk.Stack {
-  private instance:ec2.Vpc;
+  private instance: ec2.Vpc;
 
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -22,7 +22,7 @@ export class VpcStack extends cdk.Stack {
       .build();
   }
 
-  public getVpc():ec2.Vpc{
+  public getVpc(): ec2.Vpc {
     return this.instance;
   }
 }

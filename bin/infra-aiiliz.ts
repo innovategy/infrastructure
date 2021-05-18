@@ -12,7 +12,7 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION,
 };
 
-const vpcStack:VpcStack = new VpcStack(app, 'VpcStack', { env: env });
+const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
 
 new EcsStack(app, 'ComputeStack', vpcStack.getVpc(), { env: env });
 
