@@ -34,14 +34,14 @@ export default class Config {
 
   public static getMaxHealthyForService(name: string): number {
     if (process.env[`ECS_SERVICE_${name.toUpperCase()}_MAX_HEALTH`] == undefined) {
-      return this.desiredCount;
+      return this.maxHealthy;
     }
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_MAX_HEALTH`]);
   }
 
   public static getMinHealthyForService(name: string): number {
     if (process.env[`ECS_SERVICE_${name.toUpperCase()}_MIN_HEALTH`] == undefined) {
-      return this.desiredCount;
+      return this.minHealthy;
     }
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_MIN_HEALTH`]);
   }
