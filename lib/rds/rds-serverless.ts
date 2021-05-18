@@ -34,10 +34,11 @@ export default class Serverless {
       vpcSubnets: rds.SubnetGroup.fromSubnetGroupName(this.scope, this.RDS_ISOLATE_SUBNET_ID, this.isolateSubnetGroupName),
       defaultDatabaseName: this.databaseName,
       removalPolicy: RemovalPolicy.RETAIN,
+      // define security group
     });
   }
 
-  public backupDurationInDays(days: number = 1): Serverless {
+  public backupDurationInDays(days: number): Serverless {
     this.backupRetention = days;
     return this;
   }
