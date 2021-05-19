@@ -11,8 +11,6 @@ export default class LoadBalancedFargateService {
 
   private scope: cdk.Construct;
 
-  private serviceIdentifier: string;
-
   private cluster: ecs.Cluster;
 
   private cpu: number;
@@ -32,7 +30,7 @@ export default class LoadBalancedFargateService {
   private serviceName: string;
 
   public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
-    return new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceIdentifier, {
+    return new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + "Service", {
       cluster: this.cluster,
       assignPublicIp: false,
       publicLoadBalancer: true,

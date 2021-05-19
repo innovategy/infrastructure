@@ -10,8 +10,6 @@ export default class Serverless {
 
   private scope: cdk.Construct;
 
-  private clusterName: string;
-
   private vpc: ec2.Vpc;
 
   private backupRetention: number;
@@ -21,7 +19,7 @@ export default class Serverless {
   private databaseName: string;
 
   public build(): rds.ServerlessCluster {
-    return new rds.ServerlessCluster(this.scope, this.clusterName, {
+    return new rds.ServerlessCluster(this.scope, this.databaseName + "Cluster", {
       engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this.scope, 'ParameterGroup', 'default.aurora-postgresql10'),
       backupRetention: Duration.days(this.backupRetention),

@@ -1,6 +1,5 @@
 import * as route53 from '@aws-cdk/aws-route53';
 import * as cdk from '@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
 
 export default class PublicHostedZone {
   private scope: cdk.Construct;

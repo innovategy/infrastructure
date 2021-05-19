@@ -8,6 +8,7 @@ import Config from '../config/ecs.config';
 import EcrConfig from '../config/ecr.config';
 import EcsCluster from '../lib/ecs/ecs-cluster';
 import Ecr from '../lib/ecs/ecr';
+import Route53Config from "../config/routet53.config";
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
