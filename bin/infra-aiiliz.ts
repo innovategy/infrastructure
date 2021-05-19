@@ -19,7 +19,7 @@ const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
 
 const route53HostedZone: DnsStack = new DnsStack(app, 'DnsStack', { env: env });
 
-route53HostedZone.addMxRecords('_gmail', mxRecords);
+route53HostedZone.addMxRecords(Route53Config.getDomainName(), mxRecords);
 
 const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
 
