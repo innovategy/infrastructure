@@ -7,7 +7,7 @@ export class DnsStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    this.publicHostedZone = new PublicHostedZone().zoneName('PublicHostZone').inScope(this).build();
+    this.publicHostedZone = new PublicHostedZone().zoneName('PHZ').inScope(this).build();
   }
 
   public getPublicZone(): route53.PublicHostedZone {
