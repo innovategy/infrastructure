@@ -19,7 +19,7 @@ export default class EcsCluster {
     });
   }
 
-  public inScope(scope:cdk.Construct):EcsCluster{
+  public inScope(scope: cdk.Construct): EcsCluster {
     this.scope = scope;
     return this;
   }

@@ -10,14 +10,13 @@ import EcsCluster from '../lib/ecs/ecs-cluster';
 import Ecr from '../lib/ecs/ecr';
 
 interface ILoadBalancedServiceProps {
-  hostedZone: route53.PublicHostedZone
-  domainName: string
-  serviceName: string
+  hostedZone: route53.PublicHostedZone;
+  domainName: string;
+  serviceName: string;
 }
 
 export class EcsStack extends cdk.Stack {
-
-  private readonly cluster : ecs.Cluster;
+  private readonly cluster: ecs.Cluster;
 
   private readonly ecrRepository: ecr.Repository;
 

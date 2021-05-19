@@ -41,7 +41,7 @@ export default class Ecr {
     return this;
   }
 
-  public inScope(scope:cdk.Construct):Ecr{
+  public inScope(scope: cdk.Construct): Ecr {
     this.scope = scope;
     return this;
   }

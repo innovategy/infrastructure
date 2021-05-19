@@ -38,7 +38,7 @@ export default class Serverless {
     });
   }
 
-  public inScope(scope:cdk.Construct):Serverless{
+  public inScope(scope: cdk.Construct): Serverless {
     this.scope = scope;
     return this;
   }
