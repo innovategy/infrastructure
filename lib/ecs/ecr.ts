@@ -1,6 +1,7 @@
 import * as ecr from '@aws-cdk/aws-ecr';
+import {TagMutability} from '@aws-cdk/aws-ecr';
 import * as cdk from '@aws-cdk/core';
-import { Duration, RemovalPolicy } from '@aws-cdk/core';
+import {RemovalPolicy} from '@aws-cdk/core';
 
 export default class Ecr {
   private scope: cdk.Construct;
@@ -16,6 +17,7 @@ export default class Ecr {
       repositoryName: this.name,
       imageScanOnPush: this.scanImage,
       removalPolicy: RemovalPolicy.DESTROY,
+      imageTagMutability: TagMutability.IMMUTABLE,
     });
 
     repo.addLifecycleRule({
