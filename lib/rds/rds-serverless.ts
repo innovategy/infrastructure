@@ -2,7 +2,7 @@ import * as rds from '@aws-cdk/aws-rds';
 import * as cdk from '@aws-cdk/core';
 import {Duration, RemovalPolicy} from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import {SubnetType} from '@aws-cdk/aws-ec2';
+import {SecurityGroup} from '@aws-cdk/aws-ec2';
 
 export default class Serverless {
   private RDS_ISOLATE_SUBNET_ID: string = 'serverlessRdsCluster';
@@ -33,7 +33,7 @@ export default class Serverless {
       subnetGroup: rds.SubnetGroup.fromSubnetGroupName(this.scope, this.RDS_ISOLATE_SUBNET_ID, this.isolateSubnetGroupName),
       defaultDatabaseName: this.databaseName,
       removalPolicy: RemovalPolicy.RETAIN,
-      // define security group
+      securityGroups: [this.getSecurityGroup()]
     });
   }
 
@@ -65,5 +65,19 @@ export default class Serverless {
   public inVpc(vpc:ec2.Vpc): Serverless{
     this.vpc=vpc;
     return this;
+  }
+
+  private getSecurityGroup():ec2.SecurityGroup{
+    const APPLICATION_SUBNET_CIDR:string = this.vpc.privateSubnets[0].ipv4CidrBlock;
+    const POSTGRES_PORT:number = 5432;
+
+    const securityGroup = new SecurityGroup(this.scope, "SG", {
+      vpc: this.vpc,
+      allowAllOutbound: false
+    });
+
+    securityGroup.addIngressRule(ec2.Peer.ipv4(APPLICATION_SUBNET_CIDR), ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
+
+    return  securityGroup;
   }
 }
