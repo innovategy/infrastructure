@@ -3,13 +3,19 @@ import PublicHostedZone from '../lib/route53/hosted-zone';
 import * as route53 from '@aws-cdk/aws-route53';
 
 export class DnsStack extends cdk.Stack {
-  private readonly publicHostedZone: route53.PublicHostedZone;
+  private publicHostedZone: route53.PublicHostedZone;
 
-  constructor(scope: cdk.Construct, id: string, zoneName:string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    this.publicHostedZone = new PublicHostedZone()
+  }
+
+  public getNewPublicHostedZone(zoneName:string):DnsStack{
+    this.publicHostedZone = this.publicHostedZone = new PublicHostedZone()
       .zoneName(zoneName)
-      .inScope(this).build();
+      .inScope(this)
+      .build();
+
+    return this;
   }
 
   public getPublicZone(): route53.PublicHostedZone {

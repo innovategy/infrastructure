@@ -16,17 +16,16 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION,
 };
 
-const mainService = "ailliz";
+const mainService = 'ailliz';
 
 const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
-new DnsStack(app, 'DnsStack', DnsConfig.getDomainName(), { env: env }).addMxRecords(mxRecords);
-
-const aillizDashboardHostedZone: DnsStack =  new DnsStack(app, 'DnsStack', EcsConfig.getPublicDomainNameForService(mainService), { env: env });
+const dnsStack = new DnsStack(app, 'DnsStack', { env: env });
+dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName()).addMxRecords(mxRecords);
 
 const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
 
 ecs.newLoadBalancedFargateService({
-  hostedZone: aillizDashboardHostedZone.getPublicZone(),
+  hostedZone: dnsStack.getNewPublicHostedZone(EcsConfig.getPublicDomainNameForService(mainService)).getPublicZone(),
   serviceName: mainService,
 });
 
