@@ -29,4 +29,4 @@ ecs.newLoadBalancedFargateService({
   serviceName: 'ailliz',
 });
 
-new DataStack(app, 'DatabaseStack', { env: env });
+new DataStack(app, 'DatabaseStack', vpcStack.getVpc(), { env: env });

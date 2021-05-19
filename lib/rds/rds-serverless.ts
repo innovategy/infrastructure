@@ -1,7 +1,8 @@
 import * as rds from '@aws-cdk/aws-rds';
 import * as cdk from '@aws-cdk/core';
+import {Duration, RemovalPolicy} from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import { Duration, RemovalPolicy } from '@aws-cdk/core';
+import {SubnetType} from '@aws-cdk/aws-ec2';
 
 export default class Serverless {
   private RDS_ISOLATE_SUBNET_ID: string = 'serverlessRdsCluster';
@@ -29,7 +30,7 @@ export default class Serverless {
         maxCapacity: rds.AuroraCapacityUnit.ACU_32,
       },
       vpc: this.vpc,
-      vpcSubnets: rds.SubnetGroup.fromSubnetGroupName(this.scope, this.RDS_ISOLATE_SUBNET_ID, this.isolateSubnetGroupName),
+      subnetGroup: rds.SubnetGroup.fromSubnetGroupName(this.scope, this.RDS_ISOLATE_SUBNET_ID, this.isolateSubnetGroupName),
       defaultDatabaseName: this.databaseName,
       removalPolicy: RemovalPolicy.RETAIN,
       // define security group
@@ -57,7 +58,12 @@ export default class Serverless {
   }
 
   public withDatabaseName(name: string): Serverless {
-    this.isolateSubnetGroupName = name;
+    this.databaseName = name;
+    return this;
+  }
+
+  public inVpc(vpc:ec2.Vpc): Serverless{
+    this.vpc=vpc;
     return this;
   }
 }
