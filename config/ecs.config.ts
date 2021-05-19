@@ -1,4 +1,4 @@
-import { config } from 'dotenv';
+require('dotenv').config();
 
 export default class Config {
   private static cpu: number = 512;

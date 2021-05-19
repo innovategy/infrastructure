@@ -1,4 +1,4 @@
-import { config } from 'dotenv';
+require('dotenv').config();
 
 export default class Config {
   private static maxAz: number = 2;

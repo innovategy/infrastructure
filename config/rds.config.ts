@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 export default class Config {
   private static autoPause: number = 10;
 
