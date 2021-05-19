@@ -40,4 +40,9 @@ export default class Ecr {
     this.maxImageCount = maxImageCount;
     return this;
   }
+
+  public inScope(scope:cdk.Construct):Ecr{
+    this.scope = scope;
+    return this;
+  }
 }

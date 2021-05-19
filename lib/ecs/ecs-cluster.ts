@@ -19,6 +19,11 @@ export default class EcsCluster {
     });
   }
 
+  public inScope(scope:cdk.Construct):EcsCluster{
+    this.scope = scope;
+    return this;
+  }
+
   public inVPC(vpc: ec2.Vpc): EcsCluster {
     this.vpc = vpc;
     return this;

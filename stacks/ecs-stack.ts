@@ -23,18 +23,19 @@ export class EcsStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, vpc: ec2.Vpc, props?: cdk.StackProps) {
     super(scope, id, props);
-    this.cluster = new EcsCluster().withName('application').inVPC(vpc).activeContainerInsights().build();
+    this.cluster = new EcsCluster().inScope(this).withName('application').inVPC(vpc).activeContainerInsights().build();
     this.ecrRepository = new Ecr()
+      .inScope(this)
       .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
       .scanImageOnPush()
       .withName('applications')
       .build();
   }
 
-  public newLoadBalancedFargateService(scope: cdk.Construct, props: ILoadBalancedServiceProps) {
+  public newLoadBalancedFargateService(props: ILoadBalancedServiceProps) {
     new LoadBalancedFargateService()
       .inCluster(this.cluster)
-      .inScope(scope)
+      .inScope(this)
       .inDomainHostZone(props.hostedZone)
       .domainNameToLoadBalancer(props.domainName)
       .setName(props.serviceName)

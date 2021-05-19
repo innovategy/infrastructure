@@ -23,7 +23,7 @@ route53HostedZone.addMxRecords("_gmail", mxRecords);
 
 const ecs = new EcsStack(app, 'ComputeStack', vpcStack.getVpc(), { env: env });
 
-ecs.newLoadBalancedFargateService(app, {
+ecs.newLoadBalancedFargateService({
   domainName: Route53Config.getDomainName(),
   hostedZone: route53HostedZone.getPublicZone(),
   serviceName: "ailliz"

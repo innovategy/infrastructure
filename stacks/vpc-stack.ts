@@ -18,7 +18,7 @@ export class VpcStack extends cdk.Stack {
       .setPublicSubnetName(Config.getPublicSubnetName())
       .numberOfAvailabiltyZones(Config.getMaxAz())
       .withName(Config.getName())
-      .inScope(scope)
+      .inScope(this)
       .build();
   }
 
