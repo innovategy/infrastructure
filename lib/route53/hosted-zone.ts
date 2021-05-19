@@ -6,8 +6,10 @@ export default class PublicHostedZone {
 
   private name: string;
 
+  private namespace: string;
+
   public build(): route53.PublicHostedZone {
-    return new route53.PublicHostedZone(this.scope, "PublicHostedZone", {
+    return new route53.PublicHostedZone(this.scope, this.namespace , {
       zoneName: this.name,
     });
   }
@@ -19,6 +21,11 @@ export default class PublicHostedZone {
 
   public zoneName(name: string): PublicHostedZone {
     this.name = name;
+    return this;
+  }
+
+  public withNameSpace(name: string): PublicHostedZone {
+    this.namespace = name;
     return this;
   }
 }

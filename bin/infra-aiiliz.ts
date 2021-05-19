@@ -20,12 +20,12 @@ const mainService = 'ailliz';
 
 const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
 const dnsStack = new DnsStack(app, 'DnsStack', { env: env });
-dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName()).addMxRecords(mxRecords);
+dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), "PublicHostedZone").addMxRecords(mxRecords);
 
 const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
 
 ecs.newLoadBalancedFargateService({
-  hostedZone: dnsStack.getNewPublicHostedZone(EcsConfig.getPublicDomainNameForService(mainService)).getPublicZone(),
+  hostedZone: dnsStack.getNewPublicHostedZone(EcsConfig.getPublicDomainNameForService(mainService), "DashboardHostedZone").getPublicZone(),
   serviceName: mainService,
 });
 

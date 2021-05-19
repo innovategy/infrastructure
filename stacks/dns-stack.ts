@@ -9,9 +9,10 @@ export class DnsStack extends cdk.Stack {
     super(scope, id, props);
   }
 
-  public getNewPublicHostedZone(zoneName:string):DnsStack{
+  public getNewPublicHostedZone(zoneName:string, nameSpace:string):DnsStack{
     this.publicHostedZone = this.publicHostedZone = new PublicHostedZone()
       .zoneName(zoneName)
+      .withNameSpace(nameSpace)
       .inScope(this)
       .build();
 
