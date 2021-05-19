@@ -19,7 +19,7 @@ const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
 
 const route53HostedZone: DnsStack = new DnsStack(app, 'DnsStack', { env: env });
 
-route53HostedZone.addMxRecords(Route53Config.getDomainName(), mxRecords);
+route53HostedZone.addMxRecords(mxRecords);
 
 const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
 
