@@ -2,34 +2,48 @@ import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecr from '@aws-cdk/aws-ecr';
+import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
 import EcrConfig from '../config/ecr.config';
 import EcsCluster from '../lib/ecs/ecs-cluster';
-import Ecr from "../lib/ecs/ecr";
+import Ecr from '../lib/ecs/ecr';
+
+interface ILoadBalancedServiceProps {
+  hostedZone: route53.PublicHostedZone
+  domainName: string
+  serviceName: string
+}
 
 export class EcsStack extends cdk.Stack {
+
+  private readonly cluster : ecs.Cluster;
+
+  private readonly ecrRepository: ecr.Repository;
+
   constructor(scope: cdk.Construct, id: string, vpc: ec2.Vpc, props?: cdk.StackProps) {
     super(scope, id, props);
-    const cluster: ecs.Cluster = new EcsCluster().withName('application').inVPC(vpc).activeContainerInsights().build();
-    const repo:ecr.Repository=new Ecr().maxImagesToRetain(EcrConfig.getMaxImagesToRetain()).scanImageOnPush().withName("applications").build();
-
-    this.newLoadBalancedFargateService(scope, cluster, repo,  'ailliz');
+    this.cluster = new EcsCluster().withName('application').inVPC(vpc).activeContainerInsights().build();
+    this.ecrRepository = new Ecr()
+      .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
+      .scanImageOnPush()
+      .withName('applications')
+      .build();
   }
 
-  private newLoadBalancedFargateService(scope: cdk.Construct, cluster: ecs.Cluster, repo: ecr.Repository, serviceName: string) {
+  public newLoadBalancedFargateService(scope: cdk.Construct, props: ILoadBalancedServiceProps) {
     new LoadBalancedFargateService()
-      .inCluster(cluster)
+      .inCluster(this.cluster)
       .inScope(scope)
-      .inDomainHostZone()
-      .domainNameToLoadBalancer()
-      .setName(serviceName)
-      .limitServiceMemory(Config.getMemoryLimitForService(serviceName))
-      .numberOfCPU(Config.getCPUForService(serviceName))
-      .withCount(Config.getDesiredCountForService(serviceName))
-      .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(serviceName))
-      .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(serviceName))
-      .readTaskImageFromRepo(repo)
+      .inDomainHostZone(props.hostedZone)
+      .domainNameToLoadBalancer(props.domainName)
+      .setName(props.serviceName)
+      .limitServiceMemory(Config.getMemoryLimitForService(props.serviceName))
+      .numberOfCPU(Config.getCPUForService(props.serviceName))
+      .withCount(Config.getDesiredCountForService(props.serviceName))
+      .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(props.serviceName))
+      .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(props.serviceName))
+      .readTaskImageFromRepo(this.ecrRepository)
       .build();
   }
 }
