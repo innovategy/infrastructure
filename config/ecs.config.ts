@@ -18,6 +18,13 @@ export default class Config {
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_CPU`]);
   }
 
+  public static getPublicDomainNameForService(name: string): string {
+    if (process.env[`ECS_SERVICE_${name.toUpperCase()}_DOMAIN_NAME`] == undefined) {
+      return '';
+    }
+    return String(process.env[`ECS_SERVICE_${name.toUpperCase()}_DOMAIN_NAME`]);
+  }
+
   public static getMemoryLimitForService(name: string): number {
     if (process.env[`ECS_SERVICE_${name.toUpperCase()}_MEMORY_LIMIT_MIB`] == undefined) {
       return this.memoryLimitMb;

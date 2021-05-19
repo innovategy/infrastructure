@@ -4,7 +4,6 @@ import * as cdk from '@aws-cdk/core';
 import { EcsStack } from '../stacks/ecs-stack';
 import { DataStack } from '../stacks/database-stack';
 import { VpcStack } from '../stacks/vpc-stack';
-import Route53Config from '../config/routet53.config';
 import { DnsStack } from '../stacks/dns-stack';
 import { mxRecords } from '../assets/dns/mx-records';
 
@@ -24,7 +23,6 @@ route53HostedZone.addMxRecords(mxRecords);
 const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
 
 ecs.newLoadBalancedFargateService({
-  domainName: Route53Config.getDomainName(),
   hostedZone: route53HostedZone.getPublicZone(),
   serviceName: 'ailliz',
 });

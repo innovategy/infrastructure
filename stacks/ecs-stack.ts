@@ -8,11 +8,9 @@ import Config from '../config/ecs.config';
 import EcrConfig from '../config/ecr.config';
 import EcsCluster from '../lib/ecs/ecs-cluster';
 import Ecr from '../lib/ecs/ecr';
-import Route53Config from "../config/routet53.config";
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
-  domainName: string;
   serviceName: string;
 }
 
@@ -37,7 +35,7 @@ export class EcsStack extends cdk.Stack {
       .inCluster(this.cluster)
       .inScope(this)
       .inDomainHostZone(props.hostedZone)
-      .domainNameToLoadBalancer(props.domainName)
+      .domainNameToLoadBalancer(Config.getPublicDomainNameForService(props.serviceName))
       .setName(props.serviceName)
       .limitServiceMemory(Config.getMemoryLimitForService(props.serviceName))
       .numberOfCPU(Config.getCPUForService(props.serviceName))
