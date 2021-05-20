@@ -1,7 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as ecr from '@aws-cdk/aws-ecr';
-import * as ec2 from '@aws-cdk/aws-ec2';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ecs_patterns from '@aws-cdk/aws-ecs-patterns';
 import * as route53 from '@aws-cdk/aws-route53';
@@ -30,7 +29,7 @@ export default class LoadBalancedFargateService {
   private serviceName: string;
 
   public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
-    return new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + "Service", {
+    const service =  new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + "Service", {
       cluster: this.cluster,
       assignPublicIp: false,
       publicLoadBalancer: true,
@@ -50,6 +49,13 @@ export default class LoadBalancedFargateService {
         containerPort: 8080,
       },
     });
+
+    service.service.autoScaleTaskCount({
+      maxCapacity: this.desiredCount,
+      minCapacity: this.desiredCount * 2
+    })
+
+    return service;
   }
 
   public numberOfCPU(count: number): LoadBalancedFargateService {
