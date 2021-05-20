@@ -7,26 +7,55 @@ import { VpcStack } from '../stacks/vpc-stack';
 import { DnsStack } from '../stacks/dns-stack';
 import { mxRecords } from '../assets/dns/mx-records';
 import DnsConfig from '../config/routet53.config';
-import EcsConfig from '../config/ecs.config';
 
-const app = new cdk.App();
 
-const env = {
-  account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: process.env.CDK_DEFAULT_REGION,
-};
 
-const mainService = 'ailliz';
+export default class Infra{
+  private readonly app: cdk.App;
 
-const vpcStack: VpcStack = new VpcStack(app, 'VpcStack', { env: env });
-const dnsStack = new DnsStack(app, 'DnsStack', { env: env });
-dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), "PublicHostedZone").addMxRecords(mxRecords);
+  private dnsStack :DnsStack;
 
-const ecs = new EcsStack(app, 'EcsStack', vpcStack.getVpc(), { env: env });
+  private vpcStack: VpcStack;
 
-ecs.newLoadBalancedFargateService({
-  hostedZone: dnsStack.getNewPublicHostedZone(EcsConfig.getPublicDomainNameForService(mainService), "DashboardHostedZone").getPublicZone(),
-  serviceName: mainService,
-});
+  private ecsStack: EcsStack;
 
-new DataStack(app, 'DatabaseStack', vpcStack.getVpc(), { env: env });
+  private serviceName:string="ailliz";
+
+  private env = {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  };
+
+  constructor() {
+    this.app = new cdk.App();
+
+    this.setupVpcStack();
+    this.setupDnsStack();
+    this.setupEcsStack();
+    this.setupDatabaseStack();
+  }
+
+  private setupDnsStack(){
+    this.dnsStack = new DnsStack(this.app, 'DnsStack', { env: this.env });
+    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), "PublicHostedZone").addMxRecords(mxRecords);
+  }
+
+  private setupVpcStack(){
+    this.vpcStack = new VpcStack(this.app, 'VpcStack', { env: this.env });
+  }
+
+  private setupDatabaseStack(){
+    new DataStack(this.app, 'DatabaseStack', this.vpcStack.getVpc(), { env: this.env });
+  }
+
+  private setupEcsStack(){
+    this.ecsStack = new EcsStack(this.app, 'EcsStack', this.vpcStack.getVpc(), { env: this.env });
+
+    this.ecsStack.newLoadBalancedFargateService({
+      hostedZone: this.dnsStack.getPublicZone(),
+      serviceName: this.serviceName,
+    });
+  }
+}
+
+new Infra();
