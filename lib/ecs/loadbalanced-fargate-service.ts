@@ -47,7 +47,7 @@ export default class LoadBalancedFargateService {
       serviceName: this.serviceName,
       taskImageOptions: {
         image: ecs.ContainerImage.fromEcrRepository(this.repo, 'latest'),
-        containerPort: 443,
+        containerPort: 8080,
       },
     });
   }
