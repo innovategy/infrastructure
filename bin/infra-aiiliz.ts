@@ -45,7 +45,8 @@ export default class Infra{
   }
 
   private setupDatabaseStack(){
-    new DataStack(this.app, 'DatabaseStack', this.vpcStack.getVpc(), { env: this.env });
+    // TODO: remove 'this.serviceName' after cdk supports security group by name
+    new DataStack(this.app, 'DatabaseStack', this.vpcStack.getVpc(), this.serviceName,{ env: this.env });
   }
 
   private setupEcsStack(){

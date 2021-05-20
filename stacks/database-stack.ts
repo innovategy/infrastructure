@@ -3,9 +3,10 @@ import * as ec2 from '@aws-cdk/aws-ec2';
 import Serverless from '../lib/rds/rds-serverless';
 import Config from '../config/rds.config';
 import VPC from '../config/vpc.config';
+import Ecs from '../config/ecs.config';
 
 export class DataStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, vpc:ec2.Vpc ,props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, vpc:ec2.Vpc, acceptTrafficFromService:string,props?: cdk.StackProps) {
     super(scope, id, props);
 
     new Serverless()
@@ -15,6 +16,8 @@ export class DataStack extends cdk.Stack {
       .backupDurationInDays(Config.getBackupRetentionDurationPolicy())
       .inIsolateSubnetGroup(VPC.getIsolateSubnetName())
       .withDatabaseName(Config.getDatabaseName())
+      // TODO: remove after cdk supports security group by name
+      .acceptTrafficFrom(Ecs.getSecurityGroupIdForService(acceptTrafficFromService))
       .build();
   }
 }

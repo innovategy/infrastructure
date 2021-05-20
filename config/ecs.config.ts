@@ -52,4 +52,12 @@ export default class Config {
     }
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_MIN_HEALTH`]);
   }
+
+  // TODO: remove after cdk supports security group by name
+  public static getSecurityGroupIdForService(name: string): string {
+    if (process.env[`ECS_SERVICE_${name.toUpperCase()}_SECURITY_GROUP_ID`] == undefined) {
+      return '';
+    }
+    return String(process.env[`ECS_SERVICE_${name.toUpperCase()}_SECURITY_GROUP_ID`]);
+  }
 }

@@ -19,6 +19,8 @@ export default class Serverless {
 
   private databaseName: string;
 
+  private applicationSecurityGroup: string;
+
   public build(): rds.ServerlessCluster {
     return new rds.ServerlessCluster(this.scope, this.databaseName + "Cluster", {
       engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
@@ -26,14 +28,14 @@ export default class Serverless {
       backupRetention: Duration.days(this.backupRetention),
       scaling: {
         autoPause: Duration.minutes(this.autoPauseAfter),
-        minCapacity: rds.AuroraCapacityUnit.ACU_8,
+        minCapacity: rds.AuroraCapacityUnit.ACU_4,
         maxCapacity: rds.AuroraCapacityUnit.ACU_32,
       },
       vpc: this.vpc,
       subnetGroup: rds.SubnetGroup.fromSubnetGroupName(this.scope, this.RDS_ISOLATE_SUBNET_ID, this.isolateSubnetGroupName),
       defaultDatabaseName: this.databaseName,
       removalPolicy: RemovalPolicy.RETAIN,
-      securityGroups: [this.getSecurityGroup()]
+      securityGroups: [this.getSecurityGroup()],
     });
   }
 
@@ -62,6 +64,11 @@ export default class Serverless {
     return this;
   }
 
+  public acceptTrafficFrom(securityGroupId:string):Serverless{
+    this.applicationSecurityGroup = securityGroupId;
+    return this;
+  }
+
   public inVpc(vpc:ec2.Vpc): Serverless{
     this.vpc=vpc;
     return this;
@@ -69,16 +76,16 @@ export default class Serverless {
 
   private getSecurityGroup():ec2.SecurityGroup{
     const POSTGRES_PORT:number = 5432;
+    // TODO: remove after cdk supports security group by name
+    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, "SG", this.applicationSecurityGroup)
 
     const securityGroup = new SecurityGroup(this.scope, "SG", {
       vpc: this.vpc,
       allowAllOutbound: false,
-      description: "Disallow outbound traffic, and allow inbounds from private subnets CIDR blocks. to allow outbound traffic egress rules need to be defined explicitly."
+      description: "Disallow outbound traffic, and allow inbounds from application security group. to allow outbound traffic egress rules need to be defined explicitly."
     });
 
-    this.vpc.privateSubnets.map(subnet => {
-      securityGroup.addIngressRule(ec2.Peer.ipv4(subnet.ipv4CidrBlock), ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
-    })
+    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
 
     return  securityGroup;
   }
