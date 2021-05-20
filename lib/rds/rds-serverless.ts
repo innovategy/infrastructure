@@ -68,15 +68,17 @@ export default class Serverless {
   }
 
   private getSecurityGroup():ec2.SecurityGroup{
-    const APPLICATION_SUBNET_CIDR:string = this.vpc.privateSubnets[0].ipv4CidrBlock;
     const POSTGRES_PORT:number = 5432;
 
     const securityGroup = new SecurityGroup(this.scope, "SG", {
       vpc: this.vpc,
-      allowAllOutbound: false
+      allowAllOutbound: false,
+      description: "Disallow outbound traffic, and allow inbounds from private subnets CIDR blocks. to allow outbound traffic egress rules need to be defined explicitly."
     });
 
-    securityGroup.addIngressRule(ec2.Peer.ipv4(APPLICATION_SUBNET_CIDR), ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
+    this.vpc.privateSubnets.map(subnet => {
+      securityGroup.addIngressRule(ec2.Peer.ipv4(subnet.ipv4CidrBlock), ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
+    })
 
     return  securityGroup;
   }
