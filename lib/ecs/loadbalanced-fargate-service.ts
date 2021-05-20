@@ -51,8 +51,8 @@ export default class LoadBalancedFargateService {
     });
 
     service.service.autoScaleTaskCount({
-      maxCapacity: this.desiredCount,
-      minCapacity: this.desiredCount * 2
+      minCapacity: this.desiredCount,
+      maxCapacity: this.desiredCount * 2,
     })
 
     return service;
