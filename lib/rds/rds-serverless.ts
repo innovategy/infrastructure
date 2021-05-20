@@ -77,9 +77,9 @@ export default class Serverless {
   private getSecurityGroup():ec2.SecurityGroup{
     const POSTGRES_PORT:number = 5432;
     // TODO: remove after cdk supports security group by name
-    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, "RdsSG", this.applicationSecurityGroup)
+    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, "SG", this.applicationSecurityGroup)
 
-    const securityGroup = new SecurityGroup(this.scope, "SG", {
+    const securityGroup = new SecurityGroup(this.scope, "RdsSG", {
       vpc: this.vpc,
       allowAllOutbound: false,
       description: "Disallow outbound traffic, and allow inbounds from application security group. to allow outbound traffic egress rules need to be defined explicitly."
