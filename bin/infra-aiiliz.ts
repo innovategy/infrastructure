@@ -9,7 +9,8 @@ import { DnsStack } from '../stacks/dns-stack';
 import MxRecords from '../assets/dns/mx-records';
 import DnsConfig from '../config/routet53.config';
 import EcsConfig from '../config/ecs.config';
-import { IamStack } from '../stacks/Iam-stack';
+import EcrConfig from '../config/ecr.config';
+import { IamStack } from '../stacks/iam-stack';
 import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
@@ -68,7 +69,6 @@ export default class Infra {
   private setupIamStack() {
     this.iamStack = new IamStack(this.app, 'IamStack', { env: this.env });
     const deployerGroup: iam.Group = this.iamStack.newGroup('deployers');
-
     this.iamStack.newUser('github-action-deployer').addToGroup(deployerGroup);
 
     new iam.Policy(this.iamStack, 'getAuthorizedTokenPolicy', {
@@ -76,15 +76,15 @@ export default class Infra {
     }).attachToGroup(deployerGroup);
 
     new iam.Policy(this.iamStack, 'ecrPushPullPolicy', {
-      document: iam.PolicyDocument.fromJson(new EcrPushPullPolicy().ecrARN(this.ecsStack.getRepo().repositoryArn).get()),
+      document: iam.PolicyDocument.fromJson(new EcrPushPullPolicy().ecrARN(EcrConfig.getARN()).get()),
     }).attachToGroup(deployerGroup);
 
     new iam.Policy(this.iamStack, 'ecsDeployerPolicy', {
       document: iam.PolicyDocument.fromJson(
         new EcsDeployPolicy()
-          .allowServiceUpdateForCluster(this.ecsStack.getCluster().clusterArn)
-          .passRoleToTaskDef(EcsConfig.getTaskDefRoleForCluster(this.ecsStack.getCluster().clusterName))
-          .passRoleToTaskExecution(EcsConfig.getTaskExecutionRoleForCluster(this.ecsStack.getCluster().clusterName))
+          .allowServiceUpdateForCluster(EcsConfig.getArnForCluster('application'))
+          .passRoleToTaskDef(EcsConfig.getTaskDefRoleForCluster('application'))
+          .passRoleToTaskExecution(EcsConfig.getTaskExecutionRoleForCluster('application'))
           .get()
       ),
     }).attachToGroup(deployerGroup);
