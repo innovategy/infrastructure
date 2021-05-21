@@ -1,25 +1,31 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
+import * as iam from '@aws-cdk/aws-iam';
 import { EcsStack } from '../stacks/ecs-stack';
 import { DataStack } from '../stacks/database-stack';
 import { VpcStack } from '../stacks/vpc-stack';
 import { DnsStack } from '../stacks/dns-stack';
-import { mxRecords } from '../assets/dns/mx-records';
+import MxRecords from '../assets/dns/mx-records';
 import DnsConfig from '../config/routet53.config';
+import EcsConfig from '../config/ecs.config';
+import { IamStack } from '../stacks/Iam-stack';
+import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
+import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
+import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
 
-
-
-export default class Infra{
+export default class Infra {
   private readonly app: cdk.App;
 
-  private dnsStack :DnsStack;
+  private dnsStack: DnsStack;
 
   private vpcStack: VpcStack;
 
   private ecsStack: EcsStack;
 
-  private serviceName:string="ailliz";
+  private iamStack: IamStack;
+
+  private serviceName: string = 'ailliz';
 
   private env = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -33,29 +39,55 @@ export default class Infra{
     this.setupDnsStack();
     this.setupEcsStack();
     this.setupDatabaseStack();
+    this.setupIamStack();
   }
 
-  private setupDnsStack(){
+  private setupDnsStack() {
     this.dnsStack = new DnsStack(this.app, 'DnsStack', { env: this.env });
-    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), "PublicHostedZone").addMxRecords(mxRecords);
+    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone').addMxRecords(new MxRecords().get());
   }
 
-  private setupVpcStack(){
+  private setupVpcStack() {
     this.vpcStack = new VpcStack(this.app, 'VpcStack', { env: this.env });
   }
 
-  private setupDatabaseStack(){
+  private setupDatabaseStack() {
     // TODO: remove 'this.serviceName' after cdk supports security group by name
-    new DataStack(this.app, 'DatabaseStack', this.vpcStack.getVpc(), this.serviceName,{ env: this.env });
+    new DataStack(this.app, 'DatabaseStack', this.vpcStack.getVpc(), this.serviceName, { env: this.env });
   }
 
-  private setupEcsStack(){
+  private setupEcsStack() {
     this.ecsStack = new EcsStack(this.app, 'EcsStack', this.vpcStack.getVpc(), { env: this.env });
 
     this.ecsStack.newLoadBalancedFargateService({
       hostedZone: this.dnsStack.getPublicZone(),
       serviceName: this.serviceName,
     });
+  }
+
+  private setupIamStack() {
+    this.iamStack = new IamStack(this.app, 'IamStack', { env: this.env });
+    const deployerGroup: iam.Group = this.iamStack.newGroup('deployers');
+
+    this.iamStack.newUser('github-action-deployer').addToGroup(deployerGroup);
+
+    new iam.Policy(this.iamStack, 'getAuthorizedTokenPolicy', {
+      document: iam.PolicyDocument.fromJson(new GetAuthorizedTokenPolicy().get()),
+    }).attachToGroup(deployerGroup);
+
+    new iam.Policy(this.iamStack, 'ecrPushPullPolicy', {
+      document: iam.PolicyDocument.fromJson(new EcrPushPullPolicy().ecrARN(this.ecsStack.getRepo().repositoryArn).get()),
+    }).attachToGroup(deployerGroup);
+
+    new iam.Policy(this.iamStack, 'ecsDeployerPolicy', {
+      document: iam.PolicyDocument.fromJson(
+        new EcsDeployPolicy()
+          .allowServiceUpdateForCluster(this.ecsStack.getCluster().clusterArn)
+          .passRoleToTaskDef(EcsConfig.getTaskDefRoleForCluster(this.ecsStack.getCluster().clusterName))
+          .passRoleToTaskExecution(EcsConfig.getTaskExecutionRoleForCluster(this.ecsStack.getCluster().clusterName))
+          .get()
+      ),
+    }).attachToGroup(deployerGroup);
   }
 }
 

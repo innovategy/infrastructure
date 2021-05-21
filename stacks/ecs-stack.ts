@@ -45,4 +45,12 @@ export class EcsStack extends cdk.Stack {
       .readTaskImageFromRepo(this.ecrRepository)
       .build();
   }
+
+  public getCluster():ecs.Cluster{
+    return this.cluster;
+  }
+
+  public getRepo():ecr.Repository{
+    return this.ecrRepository;
+  }
 }

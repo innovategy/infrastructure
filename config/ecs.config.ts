@@ -60,4 +60,18 @@ export default class Config {
     }
     return String(process.env[`ECS_SERVICE_${name.toUpperCase()}_SECURITY_GROUP_ID`]);
   }
+
+  public static getTaskExecutionRoleForCluster(name: string): string {
+    if (process.env[`ECS_CLUSTER_${name.toUpperCase()}_TASK_EXEC_ROLE_ARN`] == undefined) {
+      return '';
+    }
+    return String(process.env[`ECS_CLUSTER_${name.toUpperCase()}_TASK_EXEC_ROLE_ARN`]);
+  }
+
+  public static getTaskDefRoleForCluster(name: string): string {
+    if (process.env[`ECS_CLUSTER_${name.toUpperCase()}_TASK_DEF_ROLE_ARN`] == undefined) {
+      return '';
+    }
+    return String(process.env[`ECS_CLUSTER_${name.toUpperCase()}_TASK_DEF_ROLE_ARN`]);
+  }
 }
