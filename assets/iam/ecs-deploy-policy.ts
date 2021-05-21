@@ -33,7 +33,8 @@ export default class EcsDeployPolicy{
           "Effect":"Allow",
           "Action":[
             "ecs:UpdateService",
-            "ecs:DescribeServices"
+            "ecs:DescribeServices",
+            "ecs:DescribeTaskDefinition"
           ],
           "Resource":[
             this.clusterArn
