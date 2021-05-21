@@ -15,7 +15,8 @@ export default class EcrPushPullPolicy {
             "ecr:PutImage",
             "ecr:InitiateLayerUpload",
             "ecr:UploadLayerPart",
-            "ecr:CompleteLayerUpload"
+            "ecr:CompleteLayerUpload",
+            "ecr:InitiateLayerUpload"
           ],
           "Resource": this.ecrArn
         }
