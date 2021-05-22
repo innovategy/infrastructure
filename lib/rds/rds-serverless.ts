@@ -26,7 +26,7 @@ export default class Serverless {
       backupRetention: Duration.days(this.backupRetention),
       scaling: {
         autoPause: Duration.minutes(this.autoPauseAfter),
-        minCapacity: rds.AuroraCapacityUnit.ACU_4,
+        minCapacity: rds.AuroraCapacityUnit.ACU_1,
         maxCapacity: rds.AuroraCapacityUnit.ACU_32,
       },
       vpc: this.vpc,
