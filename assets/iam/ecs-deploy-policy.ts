@@ -13,7 +13,8 @@ export default class EcsDeployPolicy{
           "Sid":"RegisterTaskDefinition",
           "Effect":"Allow",
           "Action":[
-            "ecs:RegisterTaskDefinition"
+            "ecs:RegisterTaskDefinition",
+            "ecs:DescribeTaskDefinition"
           ],
           "Resource":"*"
         },
@@ -34,7 +35,6 @@ export default class EcsDeployPolicy{
           "Action":[
             "ecs:UpdateService",
             "ecs:DescribeServices",
-            "ecs:DescribeTaskDefinition"
           ],
           "Resource":[
             this.clusterArn
