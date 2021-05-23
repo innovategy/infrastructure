@@ -35,7 +35,7 @@ export default class LoadBalancedFargateService {
       publicLoadBalancer: true,
       redirectHTTP: true,
       protocol: elbv2.ApplicationProtocol.HTTPS,
-      targetProtocol: elbv2.ApplicationProtocol.HTTPS,
+      targetProtocol: elbv2.ApplicationProtocol.HTTP,
       cpu: this.cpu,
       memoryLimitMiB: this.memoryLimitMiB,
       domainName: this.domainName,
@@ -46,7 +46,7 @@ export default class LoadBalancedFargateService {
       serviceName: this.serviceName,
       taskImageOptions: {
         image: ecs.ContainerImage.fromEcrRepository(this.repo, 'latest'),
-        containerPort: 8080,
+        containerPort: 80,
       },
     });
 
