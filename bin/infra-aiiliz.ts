@@ -14,6 +14,7 @@ import { IamStack } from '../stacks/iam-stack';
 import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
+import {AillizService} from "../stacks/ailliz-service-stack";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -39,6 +40,7 @@ export default class Infra {
     this.setupVpcStack();
     this.setupDnsStack();
     this.setupEcsStack();
+    this.setupAillizService();
     this.setupDatabaseStack();
     this.setupIamStack();
   }
@@ -59,11 +61,14 @@ export default class Infra {
 
   private setupEcsStack() {
     this.ecsStack = new EcsStack(this.app, 'EcsStack', this.vpcStack.getVpc(), { env: this.env });
+  }
 
-    this.ecsStack.newLoadBalancedFargateService({
+  private setupAillizService(){
+    new AillizService(this.ecsStack, "AillizService",{
       hostedZone: this.dnsStack.getPublicZone(),
-      serviceName: this.serviceName,
-    });
+      repo: this.ecsStack.getRepo(),
+      cluster: this.ecsStack.getCluster()
+    }, {env:this.env});
   }
 
   private setupIamStack() {
