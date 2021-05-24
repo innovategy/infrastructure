@@ -12,7 +12,7 @@ interface ILoadBalancedServiceProps {
   repo: ecr.Repository;
 }
 
-export class AillizService extends cdk.Stack {
+export class WebServiceStack extends cdk.Stack {
 
   private readonly serviceName:string = "ailliz";
 

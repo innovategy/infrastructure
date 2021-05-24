@@ -14,7 +14,7 @@ import { IamStack } from '../stacks/iam-stack';
 import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
-import {AillizService} from "../stacks/ailliz-service-stack";
+import {WebServiceStack} from "../stacks/web-service-stack";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -64,7 +64,7 @@ export default class Infra {
   }
 
   private setupAillizService(){
-    new AillizService(this.ecsStack, "AillizService",{
+    new WebServiceStack(this.ecsStack, "AillizService",{
       hostedZone: this.dnsStack.getPublicZone(),
       repo: this.ecsStack.getRepo(),
       cluster: this.ecsStack.getCluster()
