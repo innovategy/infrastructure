@@ -15,6 +15,7 @@ import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
 import {WebServiceStack} from "../stacks/web-service-stack";
+import CnameRecords from "../assets/dns/cname-records";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -47,7 +48,9 @@ export default class Infra {
 
   private setupDnsStack() {
     this.dnsStack = new DnsStack(this.app, 'DnsStack', { env: this.env });
-    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone').addMxRecords(new MxRecords().get());
+    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone')
+      .addMxRecords(new MxRecords().get())
+      .addCnameRecords(new CnameRecords().get());
   }
 
   private setupVpcStack() {

@@ -2,6 +2,11 @@ import * as cdk from '@aws-cdk/core';
 import PublicHostedZone from '../lib/route53/hosted-zone';
 import * as route53 from '@aws-cdk/aws-route53';
 
+interface cnameArg {
+  name: string;
+  domain: string;
+}
+
 export class DnsStack extends cdk.Stack {
   private publicHostedZone: route53.PublicHostedZone;
 
@@ -30,4 +35,18 @@ export class DnsStack extends cdk.Stack {
     });
     return this;
   }
+
+  public addCnameRecords(values: cnameArg[]): DnsStack {
+    values.forEach(record => {
+      if (record.name != null) {
+        new route53.CnameRecord(this, record.name, {
+          zone: this.publicHostedZone,
+          recordName: record.name,
+          domainName: record.domain
+        });
+      }
+    })
+    return this;
+  }
+
 }
