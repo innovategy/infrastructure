@@ -51,6 +51,10 @@ export default class Infra {
     this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone')
       .addMxRecords(new MxRecords().get())
       .addCnameRecords(new CnameRecords().get());
+    // TODO: remove after updating hosted-zones
+    this.dnsStack.getNewPublicHostedZone("noutaja.io", 'PublicHostedZone')
+      .addMxRecords(new MxRecords().get())
+      .addCnameRecords(new CnameRecords().get());
   }
 
   private setupVpcStack() {
