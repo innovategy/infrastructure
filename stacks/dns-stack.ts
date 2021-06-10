@@ -28,8 +28,8 @@ export class DnsStack extends cdk.Stack {
     return this.publicHostedZone;
   }
 
-  public addMxRecords(values: route53.MxRecordValue[], nameSpace:string = "MxRecord"): DnsStack {
-    new route53.MxRecord(this, nameSpace, {
+  public addMxRecords(values: route53.MxRecordValue[]): DnsStack {
+    new route53.MxRecord(this, "MxRecord", {
       zone: this.publicHostedZone,
       values: values,
     });
