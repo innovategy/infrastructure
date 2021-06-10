@@ -53,7 +53,7 @@ export default class Infra {
       .addCnameRecords(new CnameRecords().get());
     // TODO: remove after updating hosted-zones
     this.dnsStack.getNewPublicHostedZone("noutaja.io", 'PBZ')
-      .addMxRecords(new MxRecords().get())
+      .addMxRecords(new MxRecords().get(), "MxRecords")
       .addCnameRecords(new CnameRecords().get());
   }
 
