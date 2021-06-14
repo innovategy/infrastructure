@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import * as iam from '@aws-cdk/aws-iam';
+import * as elasticache from '@aws-cdk/aws-elasticache';
 import { EcsStack } from '../stacks/ecs-stack';
 import { DataStack } from '../stacks/database-stack';
 import { VpcStack } from '../stacks/vpc-stack';
@@ -28,6 +29,8 @@ export default class Infra {
   private ecsStack: EcsStack;
 
   private iamStack: IamStack;
+
+  private coreCache: ElasticCacheRedisStack;
 
   private serviceName: string = 'ailliz';
 
@@ -101,7 +104,7 @@ export default class Infra {
   }
 
   private setupRedisCache() {
-    new ElasticCacheRedisStack(this.app, "CoreCacheCluster", [EcsConfig.getSecurityGroupIdForService(this.serviceName)], {env: this.env});
+    this.coreCache = new ElasticCacheRedisStack(this.app, "CoreCacheCluster", [EcsConfig.getSecurityGroupIdForService(this.serviceName)], {env: this.env});
   }
 }
 
