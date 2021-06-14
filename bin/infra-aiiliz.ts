@@ -16,7 +16,7 @@ import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy'
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
 import {WebServiceStack} from "../stacks/web-service-stack";
 import CnameRecords from "../assets/dns/cname-records";
-import {ElasticCacheRedis} from "../stacks/elasticache-stack";
+import {ElasticCacheRedisStack} from "../stacks/elasticache-stack";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -101,7 +101,7 @@ export default class Infra {
   }
 
   private setupRedisCache() {
-    new ElasticCacheRedis(this.app, "RedisCacheCluster", [EcsConfig.getSecurityGroupIdForService(this.serviceName)], {env: this.env});
+    new ElasticCacheRedisStack(this.app, "CoreCacheCluster", [EcsConfig.getSecurityGroupIdForService(this.serviceName)], {env: this.env});
   }
 }
 

@@ -3,7 +3,7 @@ import Redis from "../lib/elasticache/redis";
 
 
 
-export class ElasticCacheRedis extends cdk.Stack {
+export class ElasticCacheRedisStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, securityGroups: string[], props?: cdk.StackProps) {
     super(scope, id, props);
 
