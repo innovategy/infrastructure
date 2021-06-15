@@ -30,7 +30,7 @@ export default class Redis {
     // TODO: remove after cdk supports security group by name
     const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'CacheIngress', this.applicationSecurityGroup);
 
-    const securityGroup = new SecurityGroup(this.scope, 'RdsSG', {
+    const securityGroup = new SecurityGroup(this.scope, 'ApplicationRedisCacheSecurityGroup', {
       vpc: this.vpc,
       allowAllOutbound: false,
       description:
