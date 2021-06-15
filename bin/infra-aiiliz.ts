@@ -112,7 +112,7 @@ export default class Infra {
   private setupRedisCache() {
     this.coreCache = new ElasticCacheRedisStack(
       this.app,
-      'CoreCacheCluster',
+      'CacheCluster',
       EcsConfig.getSecurityGroupIdForService(this.serviceName),
       this.vpcStack.getVpc(),
       {
