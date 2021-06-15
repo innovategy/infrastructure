@@ -14,7 +14,7 @@ export class DnsStack extends cdk.Stack {
     super(scope, id, props);
   }
 
-  public getNewPublicHostedZone(zoneName:string, nameSpace:string):DnsStack{
+  public getNewPublicHostedZone(zoneName: string, nameSpace: string): DnsStack {
     this.publicHostedZone = this.publicHostedZone = new PublicHostedZone()
       .zoneName(zoneName)
       .withNameSpace(nameSpace)
@@ -29,7 +29,7 @@ export class DnsStack extends cdk.Stack {
   }
 
   public addMxRecords(values: route53.MxRecordValue[]): DnsStack {
-    new route53.MxRecord(this, "MxRecord", {
+    new route53.MxRecord(this, 'MxRecord', {
       zone: this.publicHostedZone,
       values: values,
     });
@@ -42,11 +42,10 @@ export class DnsStack extends cdk.Stack {
         new route53.CnameRecord(this, record.name, {
           zone: this.publicHostedZone,
           recordName: record.name,
-          domainName: record.domain
+          domainName: record.domain,
         });
       }
-    })
+    });
     return this;
   }
-
 }

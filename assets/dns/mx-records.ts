@@ -1,5 +1,5 @@
-export default class MxRecords{
-  public get(){
+export default class MxRecords {
+  public get() {
     return [
       {
         hostName: 'aspmx3.googlemail.com',
@@ -20,6 +20,7 @@ export default class MxRecords{
       {
         hostName: 'aspmx.I.google.com',
         priority: 1,
-      }];
+      },
+    ];
   }
 }

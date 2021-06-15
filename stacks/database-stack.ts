@@ -6,7 +6,7 @@ import VPC from '../config/vpc.config';
 import Ecs from '../config/ecs.config';
 
 export class DataStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, vpc:ec2.Vpc, acceptTrafficFromService:string,props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, vpc: ec2.Vpc, acceptTrafficFromService: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     new Serverless()

@@ -9,7 +9,7 @@ export default class PublicHostedZone {
   private namespace: string;
 
   public build(): route53.PublicHostedZone {
-    return new route53.PublicHostedZone(this.scope, this.namespace , {
+    return new route53.PublicHostedZone(this.scope, this.namespace, {
       zoneName: this.name,
     });
   }
