@@ -21,7 +21,7 @@ export default class Redis {
     return new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
-      replicasPerNodeGroup: 2,
+      replicasPerNodeGroup: 1,
       numNodeGroups: 1,
       automaticFailoverEnabled: true,
       autoMinorVersionUpgrade: true,
