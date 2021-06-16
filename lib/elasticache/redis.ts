@@ -15,9 +15,9 @@ export default class Redis {
 
   private vpc: ec2.Vpc;
 
-  private subnets: string[];
+  private subnets: string[] = [];
 
-  private zones: string[];
+  private zones: string[] = [];
 
   public build(): elasticache.CfnCacheCluster {
     const subnetGroup = new CfnSubnetGroup(
