@@ -17,15 +17,14 @@ export default class Redis {
 
   private subnets: string[] = [];
 
-  private zones: string[] = [];
-
   public build(): elasticache.CfnCacheCluster {
     const subnetGroup = new CfnSubnetGroup(
       this.scope,
       "RedisClusterPrivateSubnetGroup",
       {
         subnetIds: this.subnets,
-        description: "cache private subnet group"
+        description: "Private cache subnet group",
+        cacheSubnetGroupName: "RedisCachePrivateSubnetGroup"
       }
     );
     return new elasticache.CfnCacheCluster(this.scope, 'RedisCacheCluster', {
@@ -35,7 +34,6 @@ export default class Redis {
       clusterName: 'redis-cache',
       port: this.REDIS_PORT,
       cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName,
-      preferredAvailabilityZones: this.zones,
       vpcSecurityGroupIds: [this.getSecurityGroup().securityGroupId],
     });
   }
@@ -47,11 +45,6 @@ export default class Redis {
       vpcId: this.vpc.vpcId,
     });
     this.subnets.push(subnet.subnetId);
-    return this;
-  }
-
-  public preferredAvailabilityZones(zones: string[]): Redis {
-    this.zones = zones;
     return this;
   }
 
