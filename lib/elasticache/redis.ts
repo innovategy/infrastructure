@@ -35,7 +35,7 @@ export default class Redis {
       clusterName: 'redis-cache',
       port: this.REDIS_PORT,
       cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName,
-      preferredAvailabilityZones: [],
+      preferredAvailabilityZones: this.zones,
       vpcSecurityGroupIds: [this.getSecurityGroup().securityGroupId],
     });
   }
