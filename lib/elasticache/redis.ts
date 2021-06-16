@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as elasticache from '@aws-cdk/aws-elasticache';
-import { CfnSecurityGroup, CfnSecurityGroupIngress } from '@aws-cdk/aws-elasticache';
+import {CfnSecurityGroup, CfnSecurityGroupIngress, CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
 import { SecurityGroup } from '@aws-cdk/aws-ec2';
 
 export default class Redis {
@@ -15,31 +15,44 @@ export default class Redis {
 
   private vpc: ec2.Vpc;
 
+  private subnets: string[];
+
+  private zones: string[];
+
   public build(): elasticache.CfnCacheCluster {
+    const subnetGroup = new CfnSubnetGroup(
+      this.scope,
+      "RedisClusterPrivateSubnetGroup",
+      {
+        subnetIds: this.subnets,
+        description: "cache private subnet group"
+      }
+    );
     return new elasticache.CfnCacheCluster(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
       numCacheNodes: 1,
       clusterName: 'redis-cache',
       port: this.REDIS_PORT,
+      cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName,
+      preferredAvailabilityZones: [],
       vpcSecurityGroupIds: [this.getSecurityGroup().securityGroupId],
     });
   }
 
-  private getSecurityGroup(): ec2.SecurityGroup {
-    // TODO: remove after cdk supports security group by name
-    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'CacheIngress', this.applicationSecurityGroup);
-
-    const securityGroup = new SecurityGroup(this.scope, 'ApplicationRedisCacheSecurityGroup', {
-      vpc: this.vpc,
-      allowAllOutbound: false,
-      description:
-        'Disallow outbound traffic, and allow inbounds from application security group. to allow outbound traffic egress rules need to be defined explicitly.',
+  public addSubnet(zoneId: string, cidrBlock: string, id: string): Redis{
+    const subnet = new ec2.PrivateSubnet(this.scope, id, {
+      availabilityZone: zoneId,
+      cidrBlock: cidrBlock,
+      vpcId: this.vpc.vpcId,
     });
+    this.subnets.push(subnet.subnetId);
+    return this;
+  }
 
-    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(this.REDIS_PORT), 'Accept traffic from application subnet');
-
-    return securityGroup;
+  public preferredAvailabilityZones(zones: string[]): Redis {
+    this.zones = zones;
+    return this;
   }
 
   public nodeType(type: string): Redis {
@@ -61,4 +74,22 @@ export default class Redis {
     this.vpc = vpc;
     return this;
   }
+
+  private getSecurityGroup(): ec2.SecurityGroup {
+    // TODO: remove after cdk supports security group by name
+    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'CacheIngress', this.applicationSecurityGroup);
+
+    const securityGroup = new SecurityGroup(this.scope, 'ApplicationRedisCacheSecurityGroup', {
+      vpc: this.vpc,
+      allowAllOutbound: false,
+      description:
+        'allow inbounds from application security group.',
+    });
+
+    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(this.REDIS_PORT), 'Accept traffic from application subnet');
+
+    return securityGroup;
+  }
+
+
 }
