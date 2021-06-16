@@ -1,8 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import {SecurityGroup} from '@aws-cdk/aws-ec2';
 import * as elasticache from '@aws-cdk/aws-elasticache';
-import {CfnSecurityGroup, CfnSecurityGroupIngress, CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
-import { SecurityGroup } from '@aws-cdk/aws-ec2';
+import {CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
 
 export default class Redis {
   private scope: cdk.Construct;
@@ -18,23 +18,13 @@ export default class Redis {
   private subnets: string[] = [];
 
   public build(): elasticache.CfnCacheCluster {
-    const subnetGroupName = "cacheSubnetGroup".toLowerCase();
-    const subnetGroup = new CfnSubnetGroup(
-      this.scope,
-      "RedisClusterPrivateSubnetGroup",
-      {
-        subnetIds: this.subnets,
-        description: "Private cache subnet group",
-        cacheSubnetGroupName: subnetGroupName
-      }
-    );
     return new elasticache.CfnCacheCluster(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
       numCacheNodes: 1,
       clusterName: 'redis-cache',
       port: this.REDIS_PORT,
-      cacheSubnetGroupName: subnetGroup.cacheSubnetGroupName,
+      cacheSubnetGroupName: this.getSubnetGroup().ref,
       vpcSecurityGroupIds: [this.getSecurityGroup().securityGroupId],
     });
   }
@@ -67,6 +57,19 @@ export default class Redis {
   public inVpc(vpc: ec2.Vpc): Redis {
     this.vpc = vpc;
     return this;
+  }
+
+  private getSubnetGroup(): CfnSubnetGroup{
+    const subnetGroupName = "cacheSubnetGroup".toLowerCase();
+    return new CfnSubnetGroup(
+      this.scope,
+      "RedisClusterPrivateSubnetGroup",
+      {
+        subnetIds: this.subnets,
+        description: "Private cache subnet group",
+        cacheSubnetGroupName: subnetGroupName
+      }
+    );
   }
 
   private getSecurityGroup(): ec2.SecurityGroup {
