@@ -18,13 +18,14 @@ export default class Redis {
   private subnets: string[] = [];
 
   public build(): elasticache.CfnCacheCluster {
+    const subnetGroupName = "cacheSubnetGroup".toLowerCase();
     const subnetGroup = new CfnSubnetGroup(
       this.scope,
       "RedisClusterPrivateSubnetGroup",
       {
         subnetIds: this.subnets,
         description: "Private cache subnet group",
-        cacheSubnetGroupName: "RedisCachePrivateSubnetGroup"
+        cacheSubnetGroupName: subnetGroupName
       }
     );
     return new elasticache.CfnCacheCluster(this.scope, 'RedisCacheCluster', {
