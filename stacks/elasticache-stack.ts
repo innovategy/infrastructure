@@ -3,9 +3,10 @@ import * as elasticache from '@aws-cdk/aws-elasticache';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import Redis from '../lib/elasticache/redis';
 import AvailabilityZones from "../assets/aws/availability-zones";
+import {CfnReplicationGroup} from "@aws-cdk/aws-elasticache";
 
 export class ElasticCacheRedisStack extends cdk.Stack {
-  private readonly stack: elasticache.CfnCacheCluster;
+  private readonly stack: CfnReplicationGroup;
 
   constructor(scope: cdk.Construct, id: string, securityGroupId: string, vpc: ec2.Vpc, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -20,7 +21,7 @@ export class ElasticCacheRedisStack extends cdk.Stack {
       .build();
   }
 
-  public getCache(): elasticache.CfnCacheCluster {
+  public getCache(): elasticache.CfnReplicationGroup {
     return this.stack;
   }
 }
