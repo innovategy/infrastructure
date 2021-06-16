@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import {SecurityGroup} from '@aws-cdk/aws-ec2';
 import * as elasticache from '@aws-cdk/aws-elasticache';
-import {CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
+import {CfnReplicationGroup, CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
 
 export default class Redis {
   private scope: cdk.Construct;
@@ -17,15 +17,21 @@ export default class Redis {
 
   private subnets: string[] = [];
 
-  public build(): elasticache.CfnCacheCluster {
-    return new elasticache.CfnCacheCluster(this.scope, 'RedisCacheCluster', {
+  public build(): CfnReplicationGroup {
+    return new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
-      numCacheNodes: 1,
-      clusterName: 'redis-cache',
+      replicasPerNodeGroup: 2,
+      numNodeGroups: 1,
+      automaticFailoverEnabled: true,
+      autoMinorVersionUpgrade: true,
+      snapshotRetentionLimit: 1,
       port: this.REDIS_PORT,
+      atRestEncryptionEnabled: true,
+      transitEncryptionEnabled: true,
+      multiAzEnabled: true,
       cacheSubnetGroupName: this.getSubnetGroup().ref,
-      vpcSecurityGroupIds: [this.getSecurityGroup().securityGroupId],
+      replicationGroupDescription: "Redis cache cluster"
     });
   }
 
