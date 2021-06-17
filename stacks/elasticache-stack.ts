@@ -16,12 +16,8 @@ export class ElasticCacheRedisStack extends cdk.Stack {
       .inScope(this)
       .addSubnet(AvailabilityZones.euCentral1().a, "10.0.5.0/24", "RedisCachePrivateSubnetZA")
       .addSubnet(AvailabilityZones.euCentral1().b, "10.0.6.0/24", "RedisCachePrivateSubnetZB")
-      .acceptRequestFrom(securityGroupId)
+      .addSecurityGroup("RedisClusterSecurityGroup" ,securityGroupId)
       .nodeType('cache.t2.micro')
       .build();
-  }
-
-  public getCache(): elasticache.CfnReplicationGroup {
-    return this.stack;
   }
 }
