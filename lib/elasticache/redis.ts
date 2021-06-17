@@ -1,6 +1,5 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import {SecurityGroup} from '@aws-cdk/aws-ec2';
 import * as elasticache from '@aws-cdk/aws-elasticache';
 import {CfnReplicationGroup, CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
 
@@ -18,7 +17,7 @@ export default class Redis {
   private subnets: string[] = [];
 
   public build(): CfnReplicationGroup {
-    let cache =  new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
+    return new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
       replicasPerNodeGroup: 1,
@@ -31,11 +30,8 @@ export default class Redis {
       transitEncryptionEnabled: true,
       multiAzEnabled: true,
       cacheSubnetGroupName: this.getSubnetGroup().ref,
-      cacheSecurityGroupNames: [this.getSecurityGroup().securityGroupName],
       replicationGroupDescription: "Redis cache cluster"
     });
-
-    return cache;
   }
 
   public addSubnet(zoneId: string, cidrBlock: string, id: string): Redis{
@@ -79,22 +75,6 @@ export default class Redis {
         cacheSubnetGroupName: subnetGroupName
       }
     );
-  }
-
-  private getSecurityGroup(): ec2.SecurityGroup {
-    // TODO: remove after cdk supports security group by name
-    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'CacheIngress', this.applicationSecurityGroup);
-
-    const securityGroup = new SecurityGroup(this.scope, 'ApplicationRedisCacheSecurityGroup', {
-      vpc: this.vpc,
-      allowAllOutbound: false,
-      description:
-        'allow inbounds from application security group.',
-    });
-
-    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(this.REDIS_PORT), 'Accept traffic from application subnet');
-
-    return securityGroup;
   }
 
 
