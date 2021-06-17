@@ -18,7 +18,7 @@ export default class Redis {
   private subnets: string[] = [];
 
   public build(): CfnReplicationGroup {
-    return new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
+    let cache =  new elasticache.CfnReplicationGroup(this.scope, 'RedisCacheCluster', {
       engine: 'redis',
       cacheNodeType: this.type,
       replicasPerNodeGroup: 1,
@@ -31,8 +31,11 @@ export default class Redis {
       transitEncryptionEnabled: true,
       multiAzEnabled: true,
       cacheSubnetGroupName: this.getSubnetGroup().ref,
+      cacheSecurityGroupNames: [this.getSecurityGroup().securityGroupName],
       replicationGroupDescription: "Redis cache cluster"
     });
+
+    return cache;
   }
 
   public addSubnet(zoneId: string, cidrBlock: string, id: string): Redis{
