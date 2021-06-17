@@ -22,11 +22,11 @@ export class EcsStack extends cdk.Stack {
       .build();
   }
 
-  public getCluster():ecs.Cluster{
+  public getCluster(): ecs.Cluster {
     return this.cluster;
   }
 
-  public getRepo():ecr.Repository{
+  public getRepo(): ecr.Repository {
     return this.ecrRepository;
   }
 }

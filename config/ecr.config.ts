@@ -10,9 +10,9 @@ export default class Config {
     return Number(process.env.ECR_MAX_IMAGE_TO_RETAIN);
   }
 
-  public static getARN():string{
+  public static getARN(): string {
     if (process.env.ECR_ARN == undefined) {
-      return ""
+      return '';
     }
     return String(process.env.ECR_ARN);
   }

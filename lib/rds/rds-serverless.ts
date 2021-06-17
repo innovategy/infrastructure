@@ -1,8 +1,8 @@
 import * as rds from '@aws-cdk/aws-rds';
 import * as cdk from '@aws-cdk/core';
-import {Duration, RemovalPolicy} from '@aws-cdk/core';
+import { Duration, RemovalPolicy } from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import {SecurityGroup, SubnetType} from '@aws-cdk/aws-ec2';
+import { SecurityGroup, SubnetType } from '@aws-cdk/aws-ec2';
 
 export default class Serverless {
   private isolateSubnetGroupName: string;
@@ -20,7 +20,7 @@ export default class Serverless {
   private applicationSecurityGroup: string;
 
   public build(): rds.ServerlessCluster {
-    return new rds.ServerlessCluster(this.scope, this.databaseName + "Cluster", {
+    return new rds.ServerlessCluster(this.scope, this.databaseName + 'Cluster', {
       engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this.scope, 'ParameterGroup', 'default.aurora-postgresql10'),
       backupRetention: Duration.days(this.backupRetention),
@@ -64,29 +64,30 @@ export default class Serverless {
     return this;
   }
 
-  public acceptTrafficFrom(securityGroupId:string):Serverless{
+  public acceptTrafficFrom(securityGroupId: string): Serverless {
     this.applicationSecurityGroup = securityGroupId;
     return this;
   }
 
-  public inVpc(vpc:ec2.Vpc): Serverless{
-    this.vpc=vpc;
+  public inVpc(vpc: ec2.Vpc): Serverless {
+    this.vpc = vpc;
     return this;
   }
 
-  private getSecurityGroup():ec2.SecurityGroup{
-    const POSTGRES_PORT:number = 5432;
+  private getSecurityGroup(): ec2.SecurityGroup {
+    const POSTGRES_PORT: number = 5432;
     // TODO: remove after cdk supports security group by name
-    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, "SG", this.applicationSecurityGroup)
+    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'SG', this.applicationSecurityGroup);
 
-    const securityGroup = new SecurityGroup(this.scope, "RdsSG", {
+    const securityGroup = new SecurityGroup(this.scope, 'RdsSG', {
       vpc: this.vpc,
       allowAllOutbound: false,
-      description: "Disallow outbound traffic, and allow inbounds from application security group. to allow outbound traffic egress rules need to be defined explicitly."
+      description:
+        'Disallow outbound traffic, and allow inbounds from application security group. to allow outbound traffic egress rules need to be defined explicitly.',
     });
 
-    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(POSTGRES_PORT), "Accept traffic from application subnet");
+    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(POSTGRES_PORT), 'Accept traffic from application subnet');
 
-    return  securityGroup;
+    return securityGroup;
   }
 }

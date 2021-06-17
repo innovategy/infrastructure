@@ -29,7 +29,7 @@ export default class LoadBalancedFargateService {
   private serviceName: string;
 
   public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
-    const service =  new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + "Service", {
+    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
       cluster: this.cluster,
       assignPublicIp: false,
       publicLoadBalancer: true,
@@ -53,7 +53,7 @@ export default class LoadBalancedFargateService {
     service.service.autoScaleTaskCount({
       minCapacity: this.desiredCount,
       maxCapacity: this.desiredCount * 2,
-    })
+    });
 
     return service;
   }

@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import * as iam from '@aws-cdk/aws-iam';
+import * as elasticache from '@aws-cdk/aws-elasticache';
 import { EcsStack } from '../stacks/ecs-stack';
 import { DataStack } from '../stacks/database-stack';
 import { VpcStack } from '../stacks/vpc-stack';
@@ -14,7 +15,9 @@ import { IamStack } from '../stacks/iam-stack';
 import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
-import {WebServiceStack} from "../stacks/web-service-stack";
+import { WebServiceStack } from '../stacks/web-service-stack';
+import CnameRecords from '../assets/dns/cname-records';
+import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -26,6 +29,8 @@ export default class Infra {
   private ecsStack: EcsStack;
 
   private iamStack: IamStack;
+
+  private coreCache: ElasticCacheRedisStack;
 
   private serviceName: string = 'ailliz';
 
@@ -43,11 +48,15 @@ export default class Infra {
     this.setupAillizService();
     this.setupDatabaseStack();
     this.setupIamStack();
+    this.setupRedisCache();
   }
 
   private setupDnsStack() {
     this.dnsStack = new DnsStack(this.app, 'DnsStack', { env: this.env });
-    this.dnsStack.getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone').addMxRecords(new MxRecords().get());
+    this.dnsStack
+      .getNewPublicHostedZone(DnsConfig.getDomainName(), 'PublicHostedZone')
+      .addMxRecords(new MxRecords().get())
+      .addCnameRecords(new CnameRecords().get());
   }
 
   private setupVpcStack() {
@@ -63,12 +72,17 @@ export default class Infra {
     this.ecsStack = new EcsStack(this.app, 'EcsStack', this.vpcStack.getVpc(), { env: this.env });
   }
 
-  private setupAillizService(){
-    new WebServiceStack(this.ecsStack, "AillizService",{
-      hostedZone: this.dnsStack.getPublicZone(),
-      repo: this.ecsStack.getRepo(),
-      cluster: this.ecsStack.getCluster()
-    }, {env:this.env});
+  private setupAillizService() {
+    new WebServiceStack(
+      this.ecsStack,
+      'AillizService',
+      {
+        hostedZone: this.dnsStack.getPublicZone(),
+        repo: this.ecsStack.getRepo(),
+        cluster: this.ecsStack.getCluster(),
+      },
+      { env: this.env }
+    );
   }
 
   private setupIamStack() {
@@ -93,6 +107,18 @@ export default class Infra {
           .get()
       ),
     }).attachToGroup(deployerGroup);
+  }
+
+  private setupRedisCache() {
+    this.coreCache = new ElasticCacheRedisStack(
+      this.app,
+      'CacheClusterStack',
+      EcsConfig.getSecurityGroupIdForService(this.serviceName),
+      this.vpcStack.getVpc(),
+      {
+        env: this.env,
+      }
+    );
   }
 }
 

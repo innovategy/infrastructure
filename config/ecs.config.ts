@@ -75,7 +75,6 @@ export default class Config {
     return String(process.env[`ECS_CLUSTER_${name.toUpperCase()}_TASK_DEF_ROLE_ARN`]);
   }
 
-
   public static getArnForCluster(name: string): string {
     if (process.env[`ECS_CLUSTER_${name.toUpperCase()}_ARN`] == undefined) {
       return '';
