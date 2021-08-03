@@ -18,6 +18,7 @@ import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
 import { WebServiceStack } from '../stacks/web-service-stack';
 import CnameRecords from '../assets/dns/cname-records';
 import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
+import {s3} from "../stacks/s3-stack";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -49,6 +50,11 @@ export default class Infra {
     this.setupDatabaseStack();
     this.setupIamStack();
     this.setupRedisCache();
+    this.setupPrivateS3Bucket();
+  }
+
+  private setupPrivateS3Bucket(){
+    new s3(this.app, "privateComputerVisionRunners", { env: this.env });
   }
 
   private setupDnsStack() {
