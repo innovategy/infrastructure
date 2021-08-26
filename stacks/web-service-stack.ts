@@ -33,8 +33,8 @@ export class WebServiceStack extends cdk.Stack {
       .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(this.serviceName))
       .build()
       .enableAutoScaling(Config.getDesiredCountForService(this.serviceName) * 2)
-      .minNumberOfRequestsToScaleUp(10_000)
-      .minCpuTargetUtilizationPercentToScaleUp(80);
+      .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName))
+      .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName));
 
 
     service.extraContainers.forEach(container => {
