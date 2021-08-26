@@ -53,7 +53,7 @@ export class EcsStack extends cdk.Stack {
     return this.cluster;
   }
 
-  public getRepo(name: string): ecr.Repository {
+  public getRepositoryByName(name: string): ecr.Repository {
     if (this.repositories[name] === undefined) {
       throw new Error('Repo not found');
     } else {

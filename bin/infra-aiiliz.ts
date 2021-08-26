@@ -81,17 +81,17 @@ export default class Infra {
 
   private setupAillizService() {
     const nginxContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
       containerPort: 80,
       containerName: 'nginx',
     };
     const applicationContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
-      containerPort: 80,
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
+      containerPort: 9000,
       containerName: 'laravel',
     };
     const queueConsumerContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
       containerName: 'queueConsumer',
     };
 
