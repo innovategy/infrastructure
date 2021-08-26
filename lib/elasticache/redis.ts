@@ -1,8 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as elasticache from '@aws-cdk/aws-elasticache';
-import {CfnReplicationGroup, CfnSubnetGroup} from '@aws-cdk/aws-elasticache';
-import {SecurityGroup} from "@aws-cdk/aws-ec2";
+import { CfnReplicationGroup, CfnSubnetGroup } from '@aws-cdk/aws-elasticache';
+import { SecurityGroup } from '@aws-cdk/aws-ec2';
 
 export default class Redis {
   private scope: cdk.Construct;
@@ -34,27 +34,27 @@ export default class Redis {
       multiAzEnabled: true,
       cacheSubnetGroupName: this.getSubnetGroup().ref,
       securityGroupIds: this.securityGroups,
-      replicationGroupDescription: "Redis cache cluster"
+      replicationGroupDescription: 'Redis cache cluster',
     });
   }
 
-  public addSecurityGroup(name: string, acceptFrom: string): Redis{
-      const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'RedisCluster' + name, acceptFrom);
+  public addSecurityGroup(name: string, acceptFrom: string): Redis {
+    const applicationSecurityGroup = ec2.SecurityGroup.fromSecurityGroupId(this.scope, 'RedisCluster' + name, acceptFrom);
 
-      const securityGroup = new SecurityGroup(this.scope, name, {
-        vpc: this.vpc,
-        allowAllOutbound: false,
-        description: 'allow inbounds from application security group',
-      });
+    const securityGroup = new SecurityGroup(this.scope, name, {
+      vpc: this.vpc,
+      allowAllOutbound: false,
+      description: 'allow inbounds from application security group',
+    });
 
-      securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(this.REDIS_PORT), 'Accept traffic from application subnet');
+    securityGroup.addIngressRule(applicationSecurityGroup, ec2.Port.tcp(this.REDIS_PORT), 'Accept traffic from application subnet');
 
-      this.securityGroups.push(securityGroup.securityGroupId);
+    this.securityGroups.push(securityGroup.securityGroupId);
 
-      return this;
+    return this;
   }
 
-  public addSubnet(zoneId: string, cidrBlock: string, id: string): Redis{
+  public addSubnet(zoneId: string, cidrBlock: string, id: string): Redis {
     const subnet = new ec2.PrivateSubnet(this.scope, id, {
       availabilityZone: zoneId,
       cidrBlock: cidrBlock,
@@ -79,18 +79,12 @@ export default class Redis {
     return this;
   }
 
-  private getSubnetGroup(): CfnSubnetGroup{
-    const subnetGroupName = "cacheSubnetGroup".toLowerCase();
-    return new CfnSubnetGroup(
-      this.scope,
-      "RedisClusterPrivateSubnetGroup",
-      {
-        subnetIds: this.subnets,
-        description: "Private cache subnet group",
-        cacheSubnetGroupName: subnetGroupName
-      }
-    );
+  private getSubnetGroup(): CfnSubnetGroup {
+    const subnetGroupName = 'cacheSubnetGroup'.toLowerCase();
+    return new CfnSubnetGroup(this.scope, 'RedisClusterPrivateSubnetGroup', {
+      subnetIds: this.subnets,
+      description: 'Private cache subnet group',
+      cacheSubnetGroupName: subnetGroupName,
+    });
   }
-
-
 }

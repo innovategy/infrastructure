@@ -45,9 +45,8 @@ export class EcsStack extends cdk.Stack {
     this.repositories = {
       application: this.appRepo,
       nginx: this.webServerRepo,
-      queueConsumer: this.qConsumerRepo
-    }
-
+      queueConsumer: this.qConsumerRepo,
+    };
   }
 
   public getCluster(): ecs.Cluster {
@@ -55,9 +54,9 @@ export class EcsStack extends cdk.Stack {
   }
 
   public getRepo(name: string): ecr.Repository {
-    if (this.repositories[name] === undefined){
-      throw new Error("Repo not found");
-    }else{
+    if (this.repositories[name] === undefined) {
+      throw new Error('Repo not found');
+    } else {
       return this.repositories[name];
     }
   }

@@ -3,13 +3,12 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
-import {ContainerDefinitionOptions} from "@aws-cdk/aws-ecs";
-
+import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
-  cluster: ecs.Cluster,
-  containers: ContainerDefinitionOptions[]
+  cluster: ecs.Cluster;
+  containers: ContainerDefinitionOptions[];
 }
 
 export class WebServiceStack extends cdk.Stack {
@@ -34,8 +33,8 @@ export class WebServiceStack extends cdk.Stack {
       .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName));
 
     service.containers.forEach(container => {
-      loadBalancedFargateService.addContainer(container)
-    })
+      loadBalancedFargateService.addContainer(container);
+    });
 
     loadBalancedFargateService.build();
   }

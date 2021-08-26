@@ -18,13 +18,8 @@ import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
 import { WebServiceStack } from '../stacks/web-service-stack';
 import CnameRecords from '../assets/dns/cname-records';
 import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
-import {s3} from "../stacks/s3-stack";
-import {
-  ContainerDefinition,
-  ContainerDefinitionOptions,
-  ContainerDefinitionProps,
-  TaskDefinition
-} from "@aws-cdk/aws-ecs";
+import { s3 } from '../stacks/s3-stack';
+import { ContainerDefinition, ContainerDefinitionOptions, ContainerDefinitionProps, TaskDefinition } from '@aws-cdk/aws-ecs';
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -59,8 +54,8 @@ export default class Infra {
     this.setupPrivateS3Bucket();
   }
 
-  private setupPrivateS3Bucket(){
-    new s3(this.app, "privateComputerVisionRunners", { env: this.env });
+  private setupPrivateS3Bucket() {
+    new s3(this.app, 'privateComputerVisionRunners', { env: this.env });
   }
 
   private setupDnsStack() {
@@ -86,19 +81,19 @@ export default class Infra {
 
   private setupAillizService() {
     const nginxContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
       containerPort: 80,
-      containerName: "nginx",
-    }
+      containerName: 'nginx',
+    };
     const applicationContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
       containerPort: 80,
-      containerName: "laravel"
-    }
+      containerName: 'laravel',
+    };
     const queueConsumerContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
-      containerName: "queueConsumer"
-    }
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo('nginx')),
+      containerName: 'queueConsumer',
+    };
 
     new WebServiceStack(
       this.ecsStack,
@@ -106,9 +101,7 @@ export default class Infra {
       {
         hostedZone: this.dnsStack.getPublicZone(),
         cluster: this.ecsStack.getCluster(),
-        containers: [
-          nginxContainer, applicationContainer, queueConsumerContainer
-        ]
+        containers: [nginxContainer, applicationContainer, queueConsumerContainer],
       },
       { env: this.env }
     );

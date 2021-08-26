@@ -4,7 +4,7 @@ import * as ecr from '@aws-cdk/aws-ecr';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ecs_patterns from '@aws-cdk/aws-ecs-patterns';
 import * as route53 from '@aws-cdk/aws-route53';
-import {ContainerDefinitionOptions} from "@aws-cdk/aws-ecs";
+import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
 
 export default class LoadBalancedFargateService {
   private service: ecs_patterns.ApplicationLoadBalancedFargateService;
@@ -47,21 +47,21 @@ export default class LoadBalancedFargateService {
       minHealthyPercent: this.minHealthyPercent,
       serviceName: this.serviceName,
       circuitBreaker: {
-        rollback: true
-      }
+        rollback: true,
+      },
     });
 
     return this.service;
   }
 
-  public addContainer(containerDefinition: ContainerDefinitionOptions): LoadBalancedFargateService{
+  public addContainer(containerDefinition: ContainerDefinitionOptions): LoadBalancedFargateService {
     if (containerDefinition.containerName != null) {
       this.service.taskDefinition.addContainer(containerDefinition.containerName, containerDefinition);
     }
     return this;
   }
 
-  public enableAutoScaling(maxCapacity: number = this.desiredCount * 3): LoadBalancedFargateService{
+  public enableAutoScaling(maxCapacity: number = this.desiredCount * 3): LoadBalancedFargateService {
     this.scalingProps = this.service.service.autoScaleTaskCount({
       minCapacity: this.desiredCount,
       maxCapacity: maxCapacity,
@@ -69,17 +69,17 @@ export default class LoadBalancedFargateService {
     return this;
   }
 
-  public minNumberOfRequestsToScaleUp(number: number): LoadBalancedFargateService{
+  public minNumberOfRequestsToScaleUp(number: number): LoadBalancedFargateService {
     this.scalingProps.scaleOnRequestCount('RequestScaling', {
       requestsPerTarget: number,
-      targetGroup: this.service.targetGroup
-    })
+      targetGroup: this.service.targetGroup,
+    });
     return this;
   }
 
   public minCpuTargetUtilizationPercentToScaleUp(percentage: number): LoadBalancedFargateService {
     this.scalingProps.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: percentage
+      targetUtilizationPercent: percentage,
     });
     return this;
   }
@@ -130,7 +130,7 @@ export default class LoadBalancedFargateService {
   }
 
   public numberOfCPU(cpuForService: number): LoadBalancedFargateService {
-     this.cpu = cpuForService;
-     return this;
+    this.cpu = cpuForService;
+    return this;
   }
 }

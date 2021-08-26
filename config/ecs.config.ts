@@ -3,9 +3,9 @@ require('dotenv').config();
 export default class Config {
   private static cpu: number = 512;
 
-  private static minCpuUtilizationToScaleUp = 80
+  private static minCpuUtilizationToScaleUp = 80;
 
-  private static minRequestNumberScaleUp = 10000
+  private static minRequestNumberScaleUp = 10000;
 
   private static memoryLimitMb: number = 256;
 
@@ -56,7 +56,6 @@ export default class Config {
     }
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_REQUEST_NUMBER_TO_SCALE_UP`]);
   }
-
 
   public static getMaxHealthyForService(name: string): number {
     if (process.env[`ECS_SERVICE_${name.toUpperCase()}_MAX_HEALTH`] == undefined) {
