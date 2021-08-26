@@ -55,7 +55,7 @@ export default class Infra {
   }
 
   private setupPrivateS3Bucket() {
-    new s3(this.app, 'privateComputerVisionRunners', { env: this.env });
+    new s3(this.app, 'PrivateBlobStorage', { env: this.env });
   }
 
   private setupDnsStack() {
