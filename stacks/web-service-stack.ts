@@ -4,11 +4,13 @@ import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
 import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
+import {ApplicationLoadBalancedFargateService} from "@aws-cdk/aws-ecs-patterns";
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
   cluster: ecs.Cluster;
-  containers: ContainerDefinitionOptions[];
+  mainContainer: ContainerDefinitionOptions,
+  extraContainers: ContainerDefinitionOptions[];
 }
 
 export class WebServiceStack extends cdk.Stack {
@@ -26,16 +28,19 @@ export class WebServiceStack extends cdk.Stack {
       .withCount(Config.getDesiredCountForService(this.serviceName))
       .limitServiceMemory(Config.getMemoryLimitForService(this.serviceName))
       .numberOfCPU(Config.getCPUForService(this.serviceName))
+      .setTargetContainer(service.mainContainer)
       .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(this.serviceName))
       .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(this.serviceName))
-      .enableAutoScaling()
-      .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName))
-      .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName));
+      .build()
+      .enableAutoScaling(Config.getDesiredCountForService(this.serviceName) * 2)
+      .minNumberOfRequestsToScaleUp(10_000)
+      .minCpuTargetUtilizationPercentToScaleUp(80);
 
-    service.containers.forEach(container => {
-      loadBalancedFargateService.addContainer(container);
-    });
 
-    loadBalancedFargateService.build();
+    service.extraContainers.forEach(container => {
+      loadBalancedFargateService.addContainer(container)
+    })
+
   }
+
 }

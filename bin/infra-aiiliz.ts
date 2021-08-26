@@ -101,7 +101,8 @@ export default class Infra {
       {
         hostedZone: this.dnsStack.getPublicZone(),
         cluster: this.ecsStack.getCluster(),
-        containers: [nginxContainer, applicationContainer, queueConsumerContainer],
+        mainContainer: nginxContainer,
+        extraContainers: [applicationContainer, queueConsumerContainer]
       },
       { env: this.env }
     );

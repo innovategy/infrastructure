@@ -39,7 +39,7 @@ export class EcsStack extends cdk.Stack {
       .inScope(this)
       .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
       .scanImageOnPush()
-      .withName('qConsumer')
+      .withName('queue-consumer')
       .build();
 
     this.repositories = {

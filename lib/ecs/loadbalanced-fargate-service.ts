@@ -5,6 +5,7 @@ import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ecs_patterns from '@aws-cdk/aws-ecs-patterns';
 import * as route53 from '@aws-cdk/aws-route53';
 import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
+import ScaleProps from "./scale-props";
 
 export default class LoadBalancedFargateService {
   private service: ecs_patterns.ApplicationLoadBalancedFargateService;
@@ -31,7 +32,11 @@ export default class LoadBalancedFargateService {
 
   private serviceName: string;
 
-  public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
+  private taskImage: ecs.ContainerDefinitionOptions;
+
+  private taskImagePort: number;
+
+  public build(): ScaleProps {
     this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
       cluster: this.cluster,
       assignPublicIp: false,
@@ -46,41 +51,23 @@ export default class LoadBalancedFargateService {
       maxHealthyPercent: this.maxHealthyPercent,
       minHealthyPercent: this.minHealthyPercent,
       serviceName: this.serviceName,
+      taskImageOptions: {
+        image: this.taskImage.image,
+        enableLogging: true,
+        containerName: this.taskImage.containerName,
+        containerPort: this.taskImagePort
+      },
       circuitBreaker: {
         rollback: true,
       },
     });
 
-    return this.service;
+    return new ScaleProps(this.service);
   }
 
-  public addContainer(containerDefinition: ContainerDefinitionOptions): LoadBalancedFargateService {
-    if (containerDefinition.containerName != null) {
-      this.service.taskDefinition.addContainer(containerDefinition.containerName, containerDefinition);
-    }
-    return this;
-  }
-
-  public enableAutoScaling(maxCapacity: number = this.desiredCount * 3): LoadBalancedFargateService {
-    this.scalingProps = this.service.service.autoScaleTaskCount({
-      minCapacity: this.desiredCount,
-      maxCapacity: maxCapacity,
-    });
-    return this;
-  }
-
-  public minNumberOfRequestsToScaleUp(number: number): LoadBalancedFargateService {
-    this.scalingProps.scaleOnRequestCount('RequestScaling', {
-      requestsPerTarget: number,
-      targetGroup: this.service.targetGroup,
-    });
-    return this;
-  }
-
-  public minCpuTargetUtilizationPercentToScaleUp(percentage: number): LoadBalancedFargateService {
-    this.scalingProps.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: percentage,
-    });
+  public setTargetContainer(container: ecs.ContainerDefinitionOptions, port: number = 80): LoadBalancedFargateService{
+    this.taskImage = container;
+    this.taskImagePort = port
     return this;
   }
 
