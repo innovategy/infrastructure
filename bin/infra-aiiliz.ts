@@ -82,7 +82,7 @@ export default class Infra {
   private setupAillizService() {
     const nginxContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
-      containerPort: 80,
+      containerPort: 8080,
       containerName: 'nginx',
     };
     const applicationContainer = {
