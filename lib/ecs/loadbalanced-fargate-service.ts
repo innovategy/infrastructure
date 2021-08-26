@@ -4,10 +4,9 @@ import * as ecr from '@aws-cdk/aws-ecr';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ecs_patterns from '@aws-cdk/aws-ecs-patterns';
 import * as route53 from '@aws-cdk/aws-route53';
+import {ContainerDefinitionOptions} from "@aws-cdk/aws-ecs";
 
 export default class LoadBalancedFargateService {
-  private repo: ecr.Repository;
-
   private service: ecs_patterns.ApplicationLoadBalancedFargateService;
 
   private scalingProps: ecs.ScalableTaskCount;
@@ -47,12 +46,15 @@ export default class LoadBalancedFargateService {
       maxHealthyPercent: this.maxHealthyPercent,
       minHealthyPercent: this.minHealthyPercent,
       serviceName: this.serviceName,
+      circuitBreaker: {
+        rollback: true
+      }
     });
 
     return this.service;
   }
 
-  public addContainer(containerDefinition: ecs.ContainerDefinitionProps): LoadBalancedFargateService{
+  public addContainer(containerDefinition: ContainerDefinitionOptions): LoadBalancedFargateService{
     if (containerDefinition.containerName != null) {
       this.service.taskDefinition.addContainer(containerDefinition.containerName, containerDefinition);
     }
@@ -69,7 +71,7 @@ export default class LoadBalancedFargateService {
 
   public minNumberOfRequestsToScaleUp(number: number): LoadBalancedFargateService{
     this.scalingProps.scaleOnRequestCount('RequestScaling', {
-      requestsPerTarget: 10000,
+      requestsPerTarget: number,
       targetGroup: this.service.targetGroup
     })
     return this;
@@ -114,11 +116,6 @@ export default class LoadBalancedFargateService {
 
   public minServiceToBeHealthyForDeployment(minHealthyPercent: number): LoadBalancedFargateService {
     this.minHealthyPercent = minHealthyPercent;
-    return this;
-  }
-
-  public readTaskImageFromRepo(repo: ecr.Repository): LoadBalancedFargateService {
-    this.repo = repo;
     return this;
   }
 

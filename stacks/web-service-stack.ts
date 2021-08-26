@@ -1,15 +1,15 @@
 import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
-import * as ecr from '@aws-cdk/aws-ecr';
 import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
+import {ContainerDefinitionOptions} from "@aws-cdk/aws-ecs";
+
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
-  cluster: ecs.Cluster;
-  repo: ecr.Repository;
-  containers: ecs.ContainerDefinitionProps[]
+  cluster: ecs.Cluster,
+  containers: ContainerDefinitionOptions[]
 }
 
 export class WebServiceStack extends cdk.Stack {
@@ -29,7 +29,6 @@ export class WebServiceStack extends cdk.Stack {
       .numberOfCPU(Config.getCPUForService(this.serviceName))
       .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(this.serviceName))
       .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(this.serviceName))
-      .readTaskImageFromRepo(service.repo)
       .enableAutoScaling()
       .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName))
       .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName));
@@ -37,7 +36,7 @@ export class WebServiceStack extends cdk.Stack {
     service.containers.forEach(container => {
       loadBalancedFargateService.addContainer(container)
     })
-    
+
     loadBalancedFargateService.build();
   }
 }

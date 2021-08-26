@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
+import * as ecs from '@aws-cdk/aws-ecs';
 import * as iam from '@aws-cdk/aws-iam';
-import * as elasticache from '@aws-cdk/aws-elasticache';
 import { EcsStack } from '../stacks/ecs-stack';
 import { DataStack } from '../stacks/database-stack';
 import { VpcStack } from '../stacks/vpc-stack';
@@ -19,6 +19,12 @@ import { WebServiceStack } from '../stacks/web-service-stack';
 import CnameRecords from '../assets/dns/cname-records';
 import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
 import {s3} from "../stacks/s3-stack";
+import {
+  ContainerDefinition,
+  ContainerDefinitionOptions,
+  ContainerDefinitionProps,
+  TaskDefinition
+} from "@aws-cdk/aws-ecs";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -79,13 +85,30 @@ export default class Infra {
   }
 
   private setupAillizService() {
+    const nginxContainer = {
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
+      containerPort: 80,
+      containerName: "nginx",
+    }
+    const applicationContainer = {
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
+      containerPort: 80,
+      containerName: "laravel"
+    }
+    const queueConsumerContainer = {
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepo("nginx")),
+      containerName: "queueConsumer"
+    }
+
     new WebServiceStack(
       this.ecsStack,
       'AillizService',
       {
         hostedZone: this.dnsStack.getPublicZone(),
-        repo: this.ecsStack.getRepo(),
         cluster: this.ecsStack.getCluster(),
+        containers: [
+          nginxContainer, applicationContainer, queueConsumerContainer
+        ]
       },
       { env: this.env }
     );
