@@ -9,6 +9,7 @@ interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
   cluster: ecs.Cluster;
   repo: ecr.Repository;
+  containers: ecs.ContainerDefinitionProps[]
 }
 
 export class WebServiceStack extends cdk.Stack {
@@ -17,18 +18,26 @@ export class WebServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, service: ILoadBalancedServiceProps, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new LoadBalancedFargateService()
+    const loadBalancedFargateService = new LoadBalancedFargateService()
       .inCluster(service.cluster)
       .inScope(this)
       .inDomainHostZone(service.hostedZone)
       .domainNameToLoadBalancer(Config.getPublicDomainNameForService(this.serviceName))
       .setName(this.serviceName)
+      .withCount(Config.getDesiredCountForService(this.serviceName))
       .limitServiceMemory(Config.getMemoryLimitForService(this.serviceName))
       .numberOfCPU(Config.getCPUForService(this.serviceName))
-      .withCount(Config.getDesiredCountForService(this.serviceName))
       .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(this.serviceName))
       .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(this.serviceName))
       .readTaskImageFromRepo(service.repo)
-      .build();
+      .enableAutoScaling()
+      .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName))
+      .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName));
+
+    service.containers.forEach(container => {
+      loadBalancedFargateService.addContainer(container)
+    })
+    
+    loadBalancedFargateService.build();
   }
 }

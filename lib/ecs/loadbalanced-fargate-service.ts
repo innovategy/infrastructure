@@ -8,6 +8,10 @@ import * as route53 from '@aws-cdk/aws-route53';
 export default class LoadBalancedFargateService {
   private repo: ecr.Repository;
 
+  private service: ecs_patterns.ApplicationLoadBalancedFargateService;
+
+  private scalingProps: ecs.ScalableTaskCount;
+
   private scope: cdk.Construct;
 
   private cluster: ecs.Cluster;
@@ -29,7 +33,7 @@ export default class LoadBalancedFargateService {
   private serviceName: string;
 
   public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
-    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
+    this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
       cluster: this.cluster,
       assignPublicIp: false,
       publicLoadBalancer: true,
@@ -40,26 +44,41 @@ export default class LoadBalancedFargateService {
       memoryLimitMiB: this.memoryLimitMiB,
       domainName: this.domainName,
       domainZone: this.domainZone,
-      desiredCount: this.desiredCount,
       maxHealthyPercent: this.maxHealthyPercent,
       minHealthyPercent: this.minHealthyPercent,
       serviceName: this.serviceName,
-      taskImageOptions: {
-        image: ecs.ContainerImage.fromEcrRepository(this.repo, 'latest'),
-        containerPort: 8080,
-      },
     });
 
-    service.service.autoScaleTaskCount({
-      minCapacity: this.desiredCount,
-      maxCapacity: this.desiredCount * 2,
-    });
-
-    return service;
+    return this.service;
   }
 
-  public numberOfCPU(count: number): LoadBalancedFargateService {
-    this.cpu = count;
+  public addContainer(containerDefinition: ecs.ContainerDefinitionProps): LoadBalancedFargateService{
+    if (containerDefinition.containerName != null) {
+      this.service.taskDefinition.addContainer(containerDefinition.containerName, containerDefinition);
+    }
+    return this;
+  }
+
+  public enableAutoScaling(maxCapacity: number = this.desiredCount * 3): LoadBalancedFargateService{
+    this.scalingProps = this.service.service.autoScaleTaskCount({
+      minCapacity: this.desiredCount,
+      maxCapacity: maxCapacity,
+    });
+    return this;
+  }
+
+  public minNumberOfRequestsToScaleUp(number: number): LoadBalancedFargateService{
+    this.scalingProps.scaleOnRequestCount('RequestScaling', {
+      requestsPerTarget: 10000,
+      targetGroup: this.service.targetGroup
+    })
+    return this;
+  }
+
+  public minCpuTargetUtilizationPercentToScaleUp(percentage: number): LoadBalancedFargateService {
+    this.scalingProps.scaleOnCpuUtilization('CpuScaling', {
+      targetUtilizationPercent: percentage
+    });
     return this;
   }
 
@@ -111,5 +130,10 @@ export default class LoadBalancedFargateService {
   public inScope(scope: cdk.Construct): LoadBalancedFargateService {
     this.scope = scope;
     return this;
+  }
+
+  public numberOfCPU(cpuForService: number): LoadBalancedFargateService {
+     this.cpu = cpuForService;
+     return this;
   }
 }
