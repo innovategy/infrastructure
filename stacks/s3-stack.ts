@@ -1,9 +1,14 @@
 import * as cdk from '@aws-cdk/core';
-import Bucket from '../lib/s3/bucket';
+import PrivateBucket from '../lib/s3/PrivateBucket';
 
 export class s3 extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    new Bucket().inScope(scope).withName('computerVisionRunnersStorage').disallowPublicToAccess().build();
+    new PrivateBucket()
+      .inScope(this)
+      .withName('audit-blobs')
+      .addTransitions("USUALLY_ACCESS", 30)
+      .addTransitions("RARELY_ACCESS", 90)
+      .build();
   }
 }
