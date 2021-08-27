@@ -19,7 +19,7 @@ import { WebServiceStack } from '../stacks/web-service-stack';
 import CnameRecords from '../assets/dns/cname-records';
 import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
 import { s3 } from '../stacks/s3-stack';
-import { ContainerDefinition, ContainerDefinitionOptions, ContainerDefinitionProps, TaskDefinition } from '@aws-cdk/aws-ecs';
+import App from "../assets/application/app-env";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -82,13 +82,15 @@ export default class Infra {
   private setupAillizService() {
     const nginxContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
-      containerPort: 8080,
+      containerPort: 80,
       containerName: 'nginx',
     };
     const applicationContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
       containerPort: 9000,
       containerName: 'laravel',
+      env: App.readEnvs(),
+      secrets: App.readSecrets(this.ecsStack)
     };
     const queueConsumerContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
