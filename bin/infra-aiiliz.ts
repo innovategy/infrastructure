@@ -90,7 +90,7 @@ export default class Infra {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
       containerPort: 9000,
       containerName: 'application',
-      env: App.readEnvs(),
+      environment: App.readEnvs(),
       secrets: App.readSecrets(this.ecsStack),
       logging: new AwsLogDriver({
         streamPrefix: "ecs/laravel-application",
