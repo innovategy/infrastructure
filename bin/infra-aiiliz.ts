@@ -83,15 +83,15 @@ export default class Infra {
   private setupAillizService() {
     const nginxContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
-      containerPort: 80,
-      containerName: 'nginx',
     };
     const applicationContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
-      containerPort: 9000,
-      containerName: 'application',
       environment: App.readEnvs(),
       secrets: App.readSecrets(this.ecsStack),
+      portMapping: {
+        "ContainerPort" : 9000,
+        "HostPort" : 9000,
+      },
       logging: new AwsLogDriver({
         streamPrefix: "ecs/laravel-application",
         mode: AwsLogDriverMode.NON_BLOCKING
@@ -99,7 +99,6 @@ export default class Infra {
     };
     // const queueConsumerContainer = {
     //   image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
-    //   containerName: 'queueConsumer',
     //   logging: new AwsLogDriver({
     //     streamPrefix: "ecs/queue-consumer",
     //     mode: AwsLogDriverMode.NON_BLOCKING

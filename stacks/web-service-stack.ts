@@ -4,7 +4,6 @@ import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
 import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
-import {ApplicationLoadBalancedFargateService} from "@aws-cdk/aws-ecs-patterns";
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
