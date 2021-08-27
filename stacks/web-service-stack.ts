@@ -35,7 +35,6 @@ export class WebServiceStack extends cdk.Stack {
       .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName))
       .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName));
 
-
     service.extraContainers.forEach(container => {
       loadBalancedFargateService.addContainer(container)
     })

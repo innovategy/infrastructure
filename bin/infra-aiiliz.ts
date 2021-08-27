@@ -83,11 +83,13 @@ export default class Infra {
   private setupAillizService() {
     const nginxContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
+      containerName: "nginx"
     };
     const applicationContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
       environment: App.readEnvs(),
       secrets: App.readSecrets(this.ecsStack),
+      containerName: "application",
       portMapping: {
         "ContainerPort" : 9000,
         "HostPort" : 9000,
@@ -99,6 +101,7 @@ export default class Infra {
     };
     const queueConsumerContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
+      containerName: "queueConsumer",
       logging: new AwsLogDriver({
         streamPrefix: "ecs/queue-consumer",
         mode: AwsLogDriverMode.NON_BLOCKING
