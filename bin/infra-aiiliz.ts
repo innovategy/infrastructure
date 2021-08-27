@@ -97,13 +97,13 @@ export default class Infra {
         mode: AwsLogDriverMode.NON_BLOCKING
       })
     };
-    // const queueConsumerContainer = {
-    //   image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
-    //   logging: new AwsLogDriver({
-    //     streamPrefix: "ecs/queue-consumer",
-    //     mode: AwsLogDriverMode.NON_BLOCKING
-    //   })
-    // };
+    const queueConsumerContainer = {
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
+      logging: new AwsLogDriver({
+        streamPrefix: "ecs/queue-consumer",
+        mode: AwsLogDriverMode.NON_BLOCKING
+      })
+    };
 
     new WebServiceStack(
       this.ecsStack,
@@ -112,7 +112,7 @@ export default class Infra {
         hostedZone: this.dnsStack.getPublicZone(),
         cluster: this.ecsStack.getCluster(),
         mainContainer: nginxContainer,
-        extraContainers: [applicationContainer]
+        extraContainers: [applicationContainer, queueConsumerContainer]
       },
       { env: this.env }
     );
