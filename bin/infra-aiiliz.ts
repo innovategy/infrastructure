@@ -106,7 +106,7 @@ export default class Infra {
     };
 
     new WebServiceStack(
-      this.ecsStack,
+      this.app,
       'AillizService',
       {
         hostedZone: this.dnsStack.getPublicZone(),
