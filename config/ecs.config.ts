@@ -3,6 +3,10 @@ require('dotenv').config();
 export default class Config {
   private static cpu: number = 512;
 
+  private static minCpuUtilizationToScaleUp = 80;
+
+  private static minRequestNumberScaleUp = 10000;
+
   private static memoryLimitMb: number = 256;
 
   private static desiredCount: number = 1;
@@ -37,6 +41,20 @@ export default class Config {
       return this.desiredCount;
     }
     return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_DESIRED_COUNT`]);
+  }
+
+  public static getCpuTargetUtilizationPercent(name: string): number {
+    if (process.env[`ECS_SERVICE_${name.toUpperCase()}_CPU_UTILIZATION_TO_SCALE_UP`] == undefined) {
+      return this.minCpuUtilizationToScaleUp;
+    }
+    return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_CPU_UTILIZATION_TO_SCALE_UP`]);
+  }
+
+  public static getRequestNumber(name: string): number {
+    if (process.env[`ECS_SERVICE_${name.toUpperCase()}_REQUEST_NUMBER_TO_SCALE_UP`] == undefined) {
+      return this.minRequestNumberScaleUp;
+    }
+    return Number(process.env[`ECS_SERVICE_${name.toUpperCase()}_REQUEST_NUMBER_TO_SCALE_UP`]);
   }
 
   public static getMaxHealthyForService(name: string): number {

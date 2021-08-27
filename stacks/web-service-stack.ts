@@ -1,14 +1,15 @@
 import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
-import * as ecr from '@aws-cdk/aws-ecr';
 import * as route53 from '@aws-cdk/aws-route53';
 import LoadBalancedFargateService from '../lib/ecs/loadbalanced-fargate-service';
 import Config from '../config/ecs.config';
+import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
 
 interface ILoadBalancedServiceProps {
   hostedZone: route53.PublicHostedZone;
   cluster: ecs.Cluster;
-  repo: ecr.Repository;
+  mainContainer: ContainerDefinitionOptions,
+  extraContainers: ContainerDefinitionOptions[];
 }
 
 export class WebServiceStack extends cdk.Stack {
@@ -17,18 +18,28 @@ export class WebServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, service: ILoadBalancedServiceProps, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new LoadBalancedFargateService()
+    const loadBalancedFargateService = new LoadBalancedFargateService()
       .inCluster(service.cluster)
       .inScope(this)
       .inDomainHostZone(service.hostedZone)
       .domainNameToLoadBalancer(Config.getPublicDomainNameForService(this.serviceName))
       .setName(this.serviceName)
+      .withCount(Config.getDesiredCountForService(this.serviceName))
       .limitServiceMemory(Config.getMemoryLimitForService(this.serviceName))
       .numberOfCPU(Config.getCPUForService(this.serviceName))
-      .withCount(Config.getDesiredCountForService(this.serviceName))
+      .setTargetContainer(service.mainContainer)
       .maxServiceToBeHealthyForDeployment(Config.getMaxHealthyForService(this.serviceName))
       .minServiceToBeHealthyForDeployment(Config.getMinHealthyForService(this.serviceName))
-      .readTaskImageFromRepo(service.repo)
-      .build();
+      .build()
+      .enableAutoScaling(Config.getDesiredCountForService(this.serviceName) * 2)
+      .minNumberOfRequestsToScaleUp(Config.getRequestNumber(this.serviceName))
+      .minCpuTargetUtilizationPercentToScaleUp(Config.getCpuTargetUtilizationPercent(this.serviceName));
+
+
+    service.extraContainers.forEach(container => {
+      loadBalancedFargateService.addContainer(container)
+    })
+
   }
+
 }

@@ -9,24 +9,55 @@ import Ecr from '../lib/ecs/ecr';
 export class EcsStack extends cdk.Stack {
   private readonly cluster: ecs.Cluster;
 
-  private readonly ecrRepository: ecr.Repository;
+  private readonly appRepo: ecr.Repository;
+
+  private readonly webServerRepo: ecr.Repository;
+
+  private readonly qConsumerRepo: ecr.Repository;
+
+  private readonly repositories: { [name: string]: ecr.Repository };
 
   constructor(scope: cdk.Construct, id: string, vpc: ec2.Vpc, props?: cdk.StackProps) {
     super(scope, id, props);
     this.cluster = new EcsCluster().inScope(this).withName('application').inVPC(vpc).activeContainerInsights().build();
-    this.ecrRepository = new Ecr()
+
+    this.appRepo = new Ecr()
       .inScope(this)
       .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
       .scanImageOnPush()
       .withName('applications')
       .build();
+
+    this.webServerRepo = new Ecr()
+      .inScope(this)
+      .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
+      .scanImageOnPush()
+      .withName('nginx')
+      .build();
+
+    this.qConsumerRepo = new Ecr()
+      .inScope(this)
+      .maxImagesToRetain(EcrConfig.getMaxImagesToRetain())
+      .scanImageOnPush()
+      .withName('queue-consumer')
+      .build();
+
+    this.repositories = {
+      application: this.appRepo,
+      nginx: this.webServerRepo,
+      queueConsumer: this.qConsumerRepo,
+    };
   }
 
   public getCluster(): ecs.Cluster {
     return this.cluster;
   }
 
-  public getRepo(): ecr.Repository {
-    return this.ecrRepository;
+  public getRepositoryByName(name: string): ecr.Repository {
+    if (this.repositories[name] === undefined) {
+      throw new Error('Repo not found');
+    } else {
+      return this.repositories[name];
+    }
   }
 }

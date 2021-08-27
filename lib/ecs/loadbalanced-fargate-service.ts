@@ -4,9 +4,13 @@ import * as ecr from '@aws-cdk/aws-ecr';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ecs_patterns from '@aws-cdk/aws-ecs-patterns';
 import * as route53 from '@aws-cdk/aws-route53';
+import { ContainerDefinitionOptions } from '@aws-cdk/aws-ecs';
+import ScaleProps from "./scale-props";
 
 export default class LoadBalancedFargateService {
-  private repo: ecr.Repository;
+  private service: ecs_patterns.ApplicationLoadBalancedFargateService;
+
+  private scalingProps: ecs.ScalableTaskCount;
 
   private scope: cdk.Construct;
 
@@ -28,8 +32,12 @@ export default class LoadBalancedFargateService {
 
   private serviceName: string;
 
-  public build(): ecs_patterns.ApplicationLoadBalancedFargateService {
-    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
+  private taskImage: ecs.ContainerDefinitionOptions;
+
+  private taskImagePort: number;
+
+  public build(): ScaleProps {
+    this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this.scope, this.serviceName + 'Service', {
       cluster: this.cluster,
       assignPublicIp: false,
       publicLoadBalancer: true,
@@ -40,26 +48,26 @@ export default class LoadBalancedFargateService {
       memoryLimitMiB: this.memoryLimitMiB,
       domainName: this.domainName,
       domainZone: this.domainZone,
-      desiredCount: this.desiredCount,
       maxHealthyPercent: this.maxHealthyPercent,
       minHealthyPercent: this.minHealthyPercent,
       serviceName: this.serviceName,
       taskImageOptions: {
-        image: ecs.ContainerImage.fromEcrRepository(this.repo, 'latest'),
-        containerPort: 8080,
+        image: this.taskImage.image,
+        enableLogging: true,
+        containerName: this.taskImage.containerName,
+        containerPort: this.taskImagePort
+      },
+      circuitBreaker: {
+        rollback: true,
       },
     });
 
-    service.service.autoScaleTaskCount({
-      minCapacity: this.desiredCount,
-      maxCapacity: this.desiredCount * 2,
-    });
-
-    return service;
+    return new ScaleProps(this.service);
   }
 
-  public numberOfCPU(count: number): LoadBalancedFargateService {
-    this.cpu = count;
+  public setTargetContainer(container: ecs.ContainerDefinitionOptions, port: number = 80): LoadBalancedFargateService{
+    this.taskImage = container;
+    this.taskImagePort = port
     return this;
   }
 
@@ -98,11 +106,6 @@ export default class LoadBalancedFargateService {
     return this;
   }
 
-  public readTaskImageFromRepo(repo: ecr.Repository): LoadBalancedFargateService {
-    this.repo = repo;
-    return this;
-  }
-
   public inCluster(cluster: ecs.Cluster): LoadBalancedFargateService {
     this.cluster = cluster;
     return this;
@@ -110,6 +113,11 @@ export default class LoadBalancedFargateService {
 
   public inScope(scope: cdk.Construct): LoadBalancedFargateService {
     this.scope = scope;
+    return this;
+  }
+
+  public numberOfCPU(cpuForService: number): LoadBalancedFargateService {
+    this.cpu = cpuForService;
     return this;
   }
 }
