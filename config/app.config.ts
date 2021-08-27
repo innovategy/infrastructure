@@ -3,7 +3,7 @@ require('dotenv').config();
 export default class Config {
   private static appEnv: string = "Production";
   private static appDebug: boolean = false;
-  private static logChannel: string = "stack";
+  private static logChannel: string = "stderr";
   private static appURL: string = "https://api.noutaja.io";
   private static exposeApi: boolean = true;
   private static dbConnection: string = "pgsql";
