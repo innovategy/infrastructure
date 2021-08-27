@@ -55,7 +55,7 @@ export default class App {
 
     const prefix = envs[Config.getAppEnv().toLocaleLowerCase()];
 
-    return `${prefix}/${path}`
+    return `/${prefix}/${path}`
   }
 
   private static readFromSSM(scope: Construct, name: string): Secret {
