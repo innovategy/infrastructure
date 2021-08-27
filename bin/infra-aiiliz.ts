@@ -2,23 +2,24 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import * as ecs from '@aws-cdk/aws-ecs';
+import {AwsLogDriver, AwsLogDriverMode} from '@aws-cdk/aws-ecs';
 import * as iam from '@aws-cdk/aws-iam';
-import { EcsStack } from '../stacks/ecs-stack';
-import { DataStack } from '../stacks/database-stack';
-import { VpcStack } from '../stacks/vpc-stack';
-import { DnsStack } from '../stacks/dns-stack';
+import {EcsStack} from '../stacks/ecs-stack';
+import {DataStack} from '../stacks/database-stack';
+import {VpcStack} from '../stacks/vpc-stack';
+import {DnsStack} from '../stacks/dns-stack';
 import MxRecords from '../assets/dns/mx-records';
 import DnsConfig from '../config/routet53.config';
 import EcsConfig from '../config/ecs.config';
 import EcrConfig from '../config/ecr.config';
-import { IamStack } from '../stacks/iam-stack';
+import {IamStack} from '../stacks/iam-stack';
 import EcrPushPullPolicy from '../assets/iam/ecr-push-pull-policy';
 import GetAuthorizedTokenPolicy from '../assets/iam/get-authorized-token-policy';
 import EcsDeployPolicy from '../assets/iam/ecs-deploy-policy';
-import { WebServiceStack } from '../stacks/web-service-stack';
+import {WebServiceStack} from '../stacks/web-service-stack';
 import CnameRecords from '../assets/dns/cname-records';
-import { ElasticCacheRedisStack } from '../stacks/elasticache-stack';
-import { s3 } from '../stacks/s3-stack';
+import {ElasticCacheRedisStack} from '../stacks/elasticache-stack';
+import {s3} from '../stacks/s3-stack';
 import App from "../assets/application/app-env";
 
 export default class Infra {
@@ -90,12 +91,20 @@ export default class Infra {
       containerPort: 9000,
       containerName: 'laravel',
       env: App.readEnvs(),
-      secrets: App.readSecrets(this.ecsStack)
+      secrets: App.readSecrets(this.ecsStack),
+      logging: new AwsLogDriver({
+        streamPrefix: "ecs/laravel-application",
+        mode: AwsLogDriverMode.NON_BLOCKING
+      })
     };
-    const queueConsumerContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
-      containerName: 'queueConsumer',
-    };
+    // const queueConsumerContainer = {
+    //   image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('queueConsumer')),
+    //   containerName: 'queueConsumer',
+    //   logging: new AwsLogDriver({
+    //     streamPrefix: "ecs/queue-consumer",
+    //     mode: AwsLogDriverMode.NON_BLOCKING
+    //   })
+    // };
 
     new WebServiceStack(
       this.ecsStack,
@@ -104,7 +113,7 @@ export default class Infra {
         hostedZone: this.dnsStack.getPublicZone(),
         cluster: this.ecsStack.getCluster(),
         mainContainer: nginxContainer,
-        extraContainers: [applicationContainer, queueConsumerContainer]
+        extraContainers: [applicationContainer]
       },
       { env: this.env }
     );
