@@ -6,8 +6,8 @@ export default class StandardQueue {
 
   private name: string;
 
-  constructor() {
-    new sqs.Queue(this.scope, this.name, {
+  public build(){
+    return new sqs.Queue(this.scope, this.name, {
       encryption: sqs.QueueEncryption.KMS_MANAGED
     });
   }
