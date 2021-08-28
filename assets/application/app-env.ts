@@ -12,6 +12,7 @@ export default class App {
       "LOG_CHANNEL": Config.getLogChannel(),
       "EXPOSE_API": String(Config.getExposeApi()),
       "DB_CONNECTION": Config.getDbConnection(),
+      "DB_SCHEMA": Config.getDbSchema(),
       "CACHE_DRIVER": Config.getCacheDriver(),
       "MODEL_CACHE_STORE": Config.getCacheDriverForEntities(),
       "QUEUE_CONNECTION": Config.getQConnection(),
@@ -22,7 +23,7 @@ export default class App {
       "MAIL_PORT": String(Config.getMailPort()),
       "MAIL_ENCRYPTION": Config.getMailEncryption(),
       "AWS_BUCKET":  Config.getAwsBucket(),
-      "AWS_DEFAULT_REGION": Config.getAwsDefaultRegion()
+      "AWS_DEFAULT_REGION": Config.getAwsDefaultRegion(),
     }
   }
 

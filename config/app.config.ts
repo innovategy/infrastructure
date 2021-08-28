@@ -18,6 +18,7 @@ export default class Config {
   private static mailerEncryption: string = "smtp";
   private static awsBucket: string = "audit-blobs";
   private static awsDefaultRegion: string = "eu-central-1";
+  private static dbSchema: string = "rbac";
 
   public static getAppEnv(): string {
     if (process.env.APP_ENV == undefined) {
@@ -88,6 +89,14 @@ export default class Config {
     }
     return process.env.DB_CONECTION;
   }
+
+  public static getDbSchema(): string {
+    if (process.env.DB_SCHEMA == undefined) {
+      return this.dbSchema;
+    }
+    return process.env.DB_SCHEMA;
+  }
+
 
   public static getSessionLifetime(): number {
     if (process.env.SESSION_LIFETIME == undefined) {
