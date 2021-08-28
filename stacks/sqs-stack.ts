@@ -6,6 +6,6 @@ import Config from "../config/sqs-config";
 export class SqsStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    new StandardQueue().queueName(Config.normalJobQueueName());
+    new StandardQueue().queueName(Config.normalJobQueueName()).inScope(scope);
   }
 }
