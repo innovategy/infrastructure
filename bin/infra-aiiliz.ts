@@ -21,6 +21,7 @@ import CnameRecords from '../assets/dns/cname-records';
 import {ElasticCacheRedisStack} from '../stacks/elasticache-stack';
 import {s3} from '../stacks/s3-stack';
 import App from "../assets/application/app-env";
+import {SqsStack} from "../stacks/sqs-stack";
 
 export default class Infra {
   private readonly app: cdk.App;
@@ -53,10 +54,15 @@ export default class Infra {
     this.setupIamStack();
     this.setupRedisCache();
     this.setupPrivateS3Bucket();
+    this.setupSqs()
   }
 
   private setupPrivateS3Bucket() {
     new s3(this.app, 'PrivateBlobStorage', { env: this.env });
+  }
+
+  private setupSqs(){
+    new SqsStack(this.app, "SqsStack", { env: this.env });
   }
 
   private setupDnsStack() {
