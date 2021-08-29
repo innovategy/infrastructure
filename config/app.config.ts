@@ -158,17 +158,17 @@ export default class Config {
   }
 
   public static getLinkedinAccountID(): string {
-    if (process.env.LINKEDIN_ACCOUNT_ID == undefined) {
+    if (process.env.LINKEDIN_CLIENT_ID == undefined) {
       throw "Linkedin account id not found"
     }
-    return process.env.LINKEDIN_ACCOUNT_ID;
+    return process.env.LINKEDIN_CLIENT_ID;
   }
 
   public static getLinkedinCallbackUri(): string {
-    if (process.env.GITHUB_ACCOUNT_ID == undefined) {
+    if (process.env.LINKEDIN_CALLBACK_URI == undefined) {
       throw this.linkedinCallbackUri;
     }
-    return process.env.GITHUB_ACCOUNT_ID;
+    return process.env.LINKEDIN_CALLBACK_URI;
   }
 
   public static getGithubCallbackUri(): string {
@@ -179,9 +179,9 @@ export default class Config {
   }
 
   public static getGithubAccountId(): string {
-    if (process.env.GITHUB_ACCOUNT_ID == undefined) {
+    if (process.env.GITHUB_CLIENT_ID == undefined) {
       throw "Github account id not found"
     }
-    return process.env.GITHUB_ACCOUNT_ID;
+    return process.env.GITHUB_CLIENT_ID;
   }
 }
