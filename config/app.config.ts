@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 export default class Config {
-  private static appEnv: string = "Production";
+  private static appEnv: string = "production";
   private static appDebug: boolean = false;
   private static logChannel: string = "stderr";
   private static appURL: string = "https://api.noutaja.io";
