@@ -4,7 +4,9 @@ export default class Config {
   private static appEnv: string = "production";
   private static appDebug: boolean = false;
   private static logChannel: string = "stderr";
-  private static appURL: string = "https://api.noutaja.io";
+  private static appURL: string = "https://dashboard.noutaja.io";
+  private static linkedinCallbackUri: string = "https://dashbard.noutaja.io/linkedin/callback";
+  private static githubCallbackUri: string = "https://dashbard.noutaja.io/github/callback";
   private static elasticCacheEndpoint: string = "localhost";
   private static exposeApi: boolean = true;
   private static dbConnection: string = "pgsql";
@@ -155,4 +157,31 @@ export default class Config {
     return process.env.CACHE_HOST;
   }
 
+  public static getLinkedinAccountID(): string {
+    if (process.env.LINKEDIN_ACCOUNT_ID == undefined) {
+      throw "Linkedin account id not found"
+    }
+    return process.env.LINKEDIN_ACCOUNT_ID;
+  }
+
+  public static getLinkedinCallbackUri(): string {
+    if (process.env.GITHUB_ACCOUNT_ID == undefined) {
+      throw this.linkedinCallbackUri;
+    }
+    return process.env.GITHUB_ACCOUNT_ID;
+  }
+
+  public static getGithubCallbackUri(): string {
+    if (process.env.GITHUB_GITHUB_URI == undefined) {
+      throw this.githubCallbackUri;
+    }
+    return process.env.GITHUB_GITHUB_URI;
+  }
+
+  public static getGithubAccountId(): string {
+    if (process.env.GITHUB_ACCOUNT_ID == undefined) {
+      throw "Github account id not found"
+    }
+    return process.env.GITHUB_ACCOUNT_ID;
+  }
 }
