@@ -14,6 +14,7 @@ export default class App {
       "DB_CONNECTION": Config.getDbConnection(),
       "DB_SCHEMA": Config.getDbSchema(),
       "CACHE_DRIVER": Config.getCacheDriver(),
+      "REDIS_HOST": Config.getRedisCacheEndpoint(),
       "MODEL_CACHE_STORE": Config.getCacheDriverForEntities(),
       "QUEUE_CONNECTION": Config.getQConnection(),
       "SESSION_DRIVER": Config.getSessionDriver(),
@@ -36,7 +37,6 @@ export default class App {
       "DB_PASSWORD": this.readFromSSM(scope, this.generateSsmKey("rds/password")),
       "MAIL_USERNAME": this.readFromSSM(scope, this.generateSsmKey("app/mailer/username")),
       "MAIL_PASSWORD": this.readFromSSM(scope, this.generateSsmKey("app/mailer/password")),
-
       "AWS_URL": this.readFromSSM(scope, this.generateSsmKey("aws/url")),
       "AWS_ACCESS_KEY_ID": this.readFromSSM(scope, this.generateSsmKey("aws/access-key-id")),
       "AWS_SECRET_ACCESS_KEY": this.readFromSSM(scope, this.generateSsmKey("aws/secret-key")),

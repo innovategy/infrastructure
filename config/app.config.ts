@@ -5,6 +5,7 @@ export default class Config {
   private static appDebug: boolean = false;
   private static logChannel: string = "stderr";
   private static appURL: string = "https://api.noutaja.io";
+  private static elasticCacheEndpoint: string = "localhost";
   private static exposeApi: boolean = true;
   private static dbConnection: string = "pgsql";
   private static cacheDriver: string = "redis";
@@ -97,7 +98,6 @@ export default class Config {
     return process.env.DB_SCHEMA;
   }
 
-
   public static getSessionLifetime(): number {
     if (process.env.SESSION_LIFETIME == undefined) {
       return this.sessionLifeTime;
@@ -147,4 +147,12 @@ export default class Config {
     }
     return process.env.AWS_BUCKET;
   }
+
+  public static getRedisCacheEndpoint(): string {
+    if (process.env.CACHE_HOST == undefined) {
+      return this.elasticCacheEndpoint;
+    }
+    return process.env.CACHE_HOST;
+  }
+
 }
