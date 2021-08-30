@@ -22,6 +22,7 @@ export default class Config {
   private static awsBucket: string = "audit-blobs";
   private static awsDefaultRegion: string = "eu-central-1";
   private static dbSchema: string = "rbac";
+  private static defaultCurrency: string = "eur";
 
   public static getAppEnv(): string {
     if (process.env.APP_ENV == undefined) {
@@ -91,6 +92,13 @@ export default class Config {
       return this.dbConnection;
     }
     return process.env.DB_CONECTION;
+  }
+
+  public static getDefaultCurrecny(): string {
+    if (process.env.DEFAULT_CURRENCY == undefined) {
+      return this.defaultCurrency;
+    }
+    return process.env.DEFAULT_CURRENCY;
   }
 
   public static getDbSchema(): string {

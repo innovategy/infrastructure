@@ -24,6 +24,7 @@ export default class App {
       "SESSION_DRIVER": Config.getSessionDriver(),
       "SESSION_LIFETIME": String(Config.getSessionLifetime()),
       "MAIL_MAILER": Config.getMailer(),
+      "CASHIER_CURRENCY": Config.getDefaultCurrecny(),
       "MAIL_HOST": Config.getMailHost(),
       "MAIL_PORT": String(Config.getMailPort()),
       "MAIL_ENCRYPTION": Config.getMailEncryption(),
