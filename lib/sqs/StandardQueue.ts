@@ -1,8 +1,8 @@
 import * as sqs from '@aws-cdk/aws-sqs';
-import {Construct} from "@aws-cdk/core";
+import * as cdk from '@aws-cdk/core';
 
 export default class StandardQueue {
-  private scope: Construct;
+  private scope: cdk.Construct;
 
   private name: string;
 
@@ -12,7 +12,7 @@ export default class StandardQueue {
     });
   }
 
-  public inScope(scope: Construct):StandardQueue{
+  public inScope(scope: cdk.Construct):StandardQueue{
     this.scope = scope;
     return this;
   }
