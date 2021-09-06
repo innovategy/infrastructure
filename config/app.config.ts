@@ -13,6 +13,8 @@ export default class Config {
   private static cacheDriver: string = "redis";
   private static entitiesCacheDriver: string = "redis";
   private static queueConnection: string = "sqs";
+  private static queueName: string = "normal";
+  private static queuePrefix: string = "";
   private static sessionDriver: string = "database";
   private static sessionLifeTime: number = 120;
   private static mailer: string = "smtp";
@@ -78,6 +80,20 @@ export default class Config {
       return this.queueConnection;
     }
     return process.env.QUEUE_CONNECTION;
+  }
+
+  public static getQName(): string {
+    if (process.env.QUEUE_NAME == undefined) {
+      return this.queueName;
+    }
+    return process.env.QUEUE_NAME;
+  }
+
+  public static getQPrefix(): string {
+    if (process.env.QUEUE_NAME == undefined) {
+      return this.queuePrefix;
+    }
+    return process.env.QUEUE_NAME;
   }
 
   public static getSessionDriver(): string {
