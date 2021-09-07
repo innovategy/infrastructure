@@ -1,0 +1,55 @@
+{
+  "availability-zones:account=519959020096:region=eu-central-1": [
+    "eu-central-1a",
+    "eu-central-1b",
+    "eu-central-1c"
+  ],
+  "vpc-provider:account=519959020096:filter.isDefault=false:filter.tag:Name=ComputeStack/main:region=eu-central-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-004d56145795ccaba",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-07f152450a6c3400e",
+            "cidr": "10.0.128.0/18",
+            "availabilityZone": "eu-central-1a",
+            "routeTableId": "rtb-0bbe3bdf5d53b87a1"
+          },
+          {
+            "subnetId": "subnet-0add9d2f723e4f9c3",
+            "cidr": "10.0.192.0/18",
+            "availabilityZone": "eu-central-1b",
+            "routeTableId": "rtb-0bc44d2ce10b231fb"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-05208c27014469ba8",
+            "cidr": "10.0.0.0/18",
+            "availabilityZone": "eu-central-1a",
+            "routeTableId": "rtb-08f4c87964c5dfedd"
+          },
+          {
+            "subnetId": "subnet-099d8e4be9407506a",
+            "cidr": "10.0.64.0/18",
+            "availabilityZone": "eu-central-1b",
+            "routeTableId": "rtb-0135a4374e0e1ef55"
+          }
+        ]
+      }
+    ]
+  },
+  "availability-zones:account=624354868497:region=eu-central-1": [
+    "eu-central-1a",
+    "eu-central-1b",
+    "eu-central-1c"
+  ]
+}

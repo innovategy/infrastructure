@@ -92,7 +92,7 @@ export default class Infra {
       containerName: "nginx"
     };
     const applicationContainer = {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application')),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('application'), "3ea2bee1268cbe0205c0dd03a8eb94463b6bad3b"),
       environment: App.readEnvs(),
       secrets: App.readSecrets(this.ecsStack),
       containerName: "application",
@@ -116,7 +116,7 @@ export default class Infra {
 
     new WebServiceStack(
       this.app,
-      'AillizService',
+      'serviceCore',
       {
         hostedZone: this.dnsStack.getPublicZone(),
         cluster: this.ecsStack.getCluster(),
