@@ -1,8 +1,8 @@
 {
-  "name": "infra-aiiliz",
+  "name": "infra-innovategy",
   "version": "0.1.0",
   "bin": {
-    "infra-aiiliz": "bin/infra-aiiliz.js"
+    "infra-aiiliz": "bin/infra-innovategy.js"
   },
   "scripts": {
     "build": "tsc",

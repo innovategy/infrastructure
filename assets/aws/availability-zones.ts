@@ -3,10 +3,11 @@ export interface availabilityZone {
 }
 
 export default class AvailabilityZones {
-  public static euCentral1(): availabilityZone {
+  public static euNorth1(): availabilityZone {
     return {
-      a: 'eu-central-1a',
-      b: 'eu-central-1b',
+      a: 'eu-north-1a',
+      b: 'eu-north-1b',
+      c: 'eu-north-1c',
     };
   }
 }

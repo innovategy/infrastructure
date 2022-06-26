@@ -14,8 +14,9 @@ export class ElasticCacheRedisStack extends cdk.Stack {
     this.stack = new Redis()
       .inVpc(vpc)
       .inScope(this)
-      .addSubnet(AvailabilityZones.euCentral1().a, '10.0.5.0/24', 'RedisCachePrivateSubnetZA')
-      .addSubnet(AvailabilityZones.euCentral1().b, '10.0.6.0/24', 'RedisCachePrivateSubnetZB')
+      .addSubnet(AvailabilityZones.euNorth1().a, '10.0.5.0/24', 'RedisCachePrivateSubnetZA')
+      .addSubnet(AvailabilityZones.euNorth1().b, '10.0.6.0/24', 'RedisCachePrivateSubnetZB')
+      .addSubnet(AvailabilityZones.euNorth1().c, '10.0.7.0/24', 'RedisCachePrivateSubnetZB')
       .addSecurityGroup('RedisClusterSecurityGroup', securityGroupId)
       .nodeType('cache.t2.micro')
       .build();

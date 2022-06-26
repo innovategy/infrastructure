@@ -36,7 +36,7 @@ export default class Infra {
 
   private coreCache: ElasticCacheRedisStack;
 
-  private serviceName: string = 'ailliz';
+  private serviceName: string = 'innovategy';
 
   private env = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -49,7 +49,7 @@ export default class Infra {
     this.setupVpcStack();
     this.setupDnsStack();
     this.setupEcsStack();
-    this.setupAillizService();
+    this.setupInnovategyService();
     this.setupDatabaseStack();
     this.setupIamStack();
     this.setupRedisCache();
@@ -86,7 +86,7 @@ export default class Infra {
     this.ecsStack = new EcsStack(this.app, 'EcsStack', this.vpcStack.getVpc(), { env: this.env });
   }
 
-  private setupAillizService() {
+  private setupInnovategyService() {
     const nginxContainer = {
       image: ecs.ContainerImage.fromEcrRepository(this.ecsStack.getRepositoryByName('nginx')),
       containerName: "nginx"

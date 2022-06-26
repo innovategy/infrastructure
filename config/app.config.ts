@@ -4,9 +4,9 @@ export default class Config {
   private static appEnv: string = "production";
   private static appDebug: boolean = false;
   private static logChannel: string = "stderr";
-  private static appURL: string = "https://dashboard.noutaja.io";
-  private static linkedinCallbackUri: string = "https://dashbard.noutaja.io/linkedin/callback";
-  private static githubCallbackUri: string = "https://dashbard.noutaja.io/github/callback";
+  private static appURL: string = "https://tools.innovategy.com";
+  private static linkedinCallbackUri: string = "https://tools.innovategy.com/linkedin/callback";
+  private static githubCallbackUri: string = "https://tools.innovategy.com/github/callback";
   private static elasticCacheEndpoint: string = "localhost";
   private static exposeApi: boolean = true;
   private static dbConnection: string = "pgsql";
@@ -22,7 +22,7 @@ export default class Config {
   private static mailerPort: number = 2525;
   private static mailerEncryption: string = "smtp";
   private static awsBucket: string = "audit-blobs";
-  private static awsDefaultRegion: string = "eu-central-1";
+  private static awsDefaultRegion: string = "eu-north-1";
   private static dbSchema: string = "rbac";
   private static defaultCurrency: string = "eur";
 

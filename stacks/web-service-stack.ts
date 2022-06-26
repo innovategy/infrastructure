@@ -13,7 +13,7 @@ interface ILoadBalancedServiceProps {
 }
 
 export class WebServiceStack extends cdk.Stack {
-  private readonly serviceName: string = 'ailliz';
+  private readonly serviceName: string = 'innovategy';
 
   constructor(scope: cdk.Construct, id: string, service: ILoadBalancedServiceProps, props?: cdk.StackProps) {
     super(scope, id, props);
